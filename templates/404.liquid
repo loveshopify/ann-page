@@ -1,0 +1,13 @@
+<!-- /templates/404.liquid -->
+
+<section class="page">
+	<h2 class="theme">{{ 'general.404.title' | t }}</h2>
+	<p class="center text--404">{{ 'general.404.subtext_html' | t }}</p>
+
+	<div class="search-outer">
+      <form action="/search" class="search-form">
+          <input type="text" name="q" class="search-box" placeholder="Find products" value="{{ search.terms }}"/>
+          <button type="submit" class="search-submit">Search</button>
+      </form>
+    </div>
+</section>

@@ -1,0 +1,250 @@
+{% comment %} Section - Product Customizer {% endcomment %}
+{% comment %} PLEASE DO NOT MODIFY THIS SECTION, DOING SO MAY BREAK YOUR PRODUCT OPTIONS {% endcomment %}
+
+.product-customizer-options {
+  .option-type-checkbox_group ul, .option-type-radio ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    li {
+      list-style-type: none;
+    }
+    input, label {
+      display: inline;
+    }
+  }
+  .option-type-radio ul input {
+    -webkit-appearance: radio;
+  }
+  .option-type-checkbox {
+    input, & > div, label { display: inline; }
+  }
+  .product-customizer-option-description {
+    font-size: 90%;
+  }
+  .option-required label::after { 
+     color: #ff5d5d; 
+     content: " *"; 
+  }
+  .option-type-radio ul li label::after {
+    color: initial;
+    content: initial;
+  }
+}
+.product-customizer-customizations-total, .product-customizer-selections-message {
+  color: #555;
+  opacity: 0.7;
+}
+
+/* Custom Swatch Dropdown  */
+
+.product-customizer-swatch-wrapper {
+     position: relative;
+     user-select: none;
+}
+
+.product-customizer-swatch-container {
+     position: relative;
+     display: flex;
+     flex-direction: column;
+}
+
+.product-customizer-swatch__trigger {
+     position: relative;
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+     padding: 0 22px;
+     font-weight: 400;
+     color: #3b3b3b;
+     height: 32px;
+     line-height: 60px;
+     background: #FFF;
+     cursor: pointer;
+     border: 1px solid rgba(0,0,0,0.15);
+     border-radius: 2px;
+}
+
+.product-customizer-swatch__trigger span{
+     white-space: nowrap;
+     text-overflow: ellipsis;
+     overflow: hidden;
+}
+
+
+.product-customizer-swatches {
+     position: absolute;
+     display: block;
+     top: 100%;
+     left: 0;
+     right: 0;
+     border: 1px solid rgba(0,0,0,0.15);
+     border-bottom-left-radius: 2px;
+     border-bottom-right-radius: 2px;
+     border-top: 0;
+     background: #fff;
+     transition: all 0.5s;
+     opacity: 0;
+     visibility: hidden;
+     pointer-events: none;
+     z-index: 2;
+}
+
+.product-customizer-swatch-container.open .product-customizer-swatches {
+     opacity: 1;
+     visibility: visible;
+     pointer-events: all;
+}
+
+.product-customizer-swatch {
+     width: auto;
+     position: relative;
+     display: block;
+     padding: 0 22px 0 22px;
+     font-weight: 300;
+     color: #3b3b3b;
+     line-height: 40px;
+     cursor: pointer;
+     transition: all 0.5s;
+}
+
+.product-customizer-swatch:hover {
+     cursor: pointer;
+     background-color: #b2b2b2;
+}
+
+ .product-customizer-swatch.selected {
+     color: #ffffff;
+     background-color: #305c91;
+}
+
+.product-customizer-arrow {
+     position: relative;
+     height: 15px;
+     width: 15px;
+}
+
+.product-customizer-arrow::before{
+     content: "\025BC";
+     position: absolute;
+     bottom: 25px;
+     right: -13px;
+     height: 100%;
+     transition: all 0.5s;
+	 font-size: 10px;
+}
+
+.open .product-customizer-arrow::before {
+     position: absolute;
+     bottom: -21px;
+     right: -13px;
+     height: 100%;
+     transition: all 0.5s;
+	 font-size: 10px;
+     transform: scaleY(-1);
+}
+
+.main-content{
+  overflow: visible;
+}
+
+/* Custom Font Selector */
+.font-select * {
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.font-select {
+	font-size: 16px;
+	width: 100%;
+	position: relative;
+	display: inline-block;
+}
+
+.font-select .fs-drop {
+	position: absolute;
+	top: 38px;
+	left: 0;
+	z-index: 999;
+	background: #fff;
+	color: #000;
+	width: 100%;
+	border: 1px solid #aaa;
+	border-top: 0;
+	box-shadow: 0 4px 5px rgba(0,0,0,.15);
+	border-radius: 0 0 4px 4px;
+}
+
+.font-select > span {
+	outline: 0;
+	border-radius: 0.25rem;
+	border: 1px solid #ced4da;
+	display: block;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	height: 38px;
+	line-height: 32px;
+	padding: 3px 8px 3px 8px;
+	color: #444;
+	background: #fff url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3e%3cpath fill='%23303030' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e") no-repeat right 0.75rem center/8px 10px;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.font-select-active > span {
+	background-color: #eee;
+	border-bottom-left-radius : 0;
+	border-bottom-right-radius: 0;
+}
+
+.font-select .fs-results {
+	max-height: 190px;
+	overflow-x: hidden;
+	overflow-y: auto;
+	margin: 0;
+	padding: 0;
+}
+
+.font-select .fs-results li {
+	line-height: 80%;
+	padding: 8px;
+	margin: 0;
+	list-style: none;
+	font-size: 18px;
+	white-space: nowrap;
+}
+
+.font-select .fs-results li.active {
+	background-color: #3875d7;
+	color: #fff;
+	cursor: pointer;
+}
+
+.font-select .fs-search {
+	border-bottom: 1px solid #aaa;
+	padding: 4px;
+}
+
+.font-select .fs-search input {
+	padding: 7px;
+	width: 100%;
+	border: 1px solid #aaa;
+	font: 16px Helvetica, Sans-serif;
+	box-shadow: inset 0 1px 3px rgba(0,0,0,.06);
+	border-radius: .1875rem;
+}
+
+/* Image Preview */
+.product-customizer-preview{
+     padding: 10px 0;
+}
+
+.product-customizer-cart-preview{
+     height: 100px;
+     max-width: 150px;
+}
+{% comment %} Section - Custom {% endcomment %}
+{% comment %} Place any and all ShopStorm Apps custom CSS below this comment {% endcomment %}

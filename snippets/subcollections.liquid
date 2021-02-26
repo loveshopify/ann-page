@@ -1,0 +1,68 @@
+<!-- /snippets/subcollections.liquid -->
+
+{%- assign current_handle = collection.handle  -%}
+{%- assign sub_collections = linklists[collection.handle].links -%}
+{%- assign sub_collection_grid = section.settings.subcollection_grid -%}
+{%- assign heading_align = section.settings.subcollection_align -%}
+
+{%- assign item_width = 'one-half' -%}
+{%- assign list_width = 'one-whole' -%}
+{%- case sub_collection_grid -%}
+  {%- when 1 -%}
+    {%- assign item_width = 'one-whole' -%}
+    {%- assign list_width = 'one-half' -%}
+  {%- when 2 -%}
+    {%- assign item_width = 'one-half' -%}
+  {%- when 3 -%}
+    {%- assign item_width = 'one-third' -%}
+  {%- when 4 -%}
+    {%- assign item_width = 'one-quarter' -%}
+  {%- when 5 -%}
+    {%- assign item_width = 'one-fifth' -%}
+  {%- when 6 -%}
+    {%- assign item_width = 'one-sixth' -%}
+{%- endcase -%}
+
+{%- if sub_collections.size > 0 -%}
+  <div class="collection__subcollections">
+    <div class="subcollections">
+      <ul class="subcollections__list {{ list_width }}">
+        {% for sublink in sub_collections %}
+          {% if sublink.type == 'collection_link' %}
+            {% assign sub_collection = collections[sublink.object.handle] %}
+            <li class="subcollection__item {{ item_width }}">
+              {%- assign image = sub_collection.image -%}
+              {%- if image == blank -%}
+                {%- assign image = sub_collection.products.first.featured_image -%}
+              {%- endif -%}
+
+              <div class="subcollection__image lazyload"
+                  role="img"
+                  aria-label="{{ image.alt }}"
+                  data-bgset="{% include 'bgset', image: image %}"
+                  data-sizes="auto"
+                  data-parent-fit="cover">
+              </div>
+              <noscript>
+                <div class="subcollection__image" role="img" aria-label="{{ image.alt }}" style="background-image: url({{ image | img_url: '512x' }});"></div>
+              </noscript>
+              <div class="subcollection__image__zoom lazyload"
+                  role="img"
+                  aria-label="{{ image.alt }}"
+                  data-bgset="{% include 'bgset', image: image %}"
+                  data-sizes="auto"
+                  data-parent-fit="cover">
+              </div>
+              <noscript>
+                <div class="subcollection__image__zoom" role="img" aria-label="{{ image.alt }}" style="background-image: url({{ image | img_url: '512x' }});"></div>
+              </noscript>
+              <a class="subcollection__link {{ heading_align }}" href="/collections/{{ sub_collection.handle }}">
+                <h3 class="subcollection__title">{{ sub_collection.title }}</h3>
+              </a>
+            </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+{%- endif -%}

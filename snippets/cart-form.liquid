@@ -1,0 +1,167 @@
+<form action="/cart" method="post" id="CartForm" class="just">
+  <div id="CartOuter">
+    <table>
+      <thead>
+        <tr class="top-row">
+          <th class="img">&nbsp;</th>
+          <th class="desc" colspan="2">{{ 'customer.order.details.product' | t }}</th>
+          <th>{{ 'customer.order.details.price' | t }}</th>
+          <th class="center">{{ 'customer.order.details.quantity' | t }}</th>
+          <!-- <th class="total">{{ 'customer.order.details.total' | t }}</th> -->
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in cart.items %}
+        {%- assign discounted = false -%}
+        {%- if item.original_price > item.final_price -%}
+          {%- assign discounted = true -%}
+        {%- endif -%}
+        {%- assign sale = false -%}
+        {%- if item.variant.compare_at_price > item.price -%}
+          {%- assign sale = true -%}
+        {%- endif -%}
+
+          <tr class="item {% if discounted %} line--discounted{% endif %}{% if sale %} line--sale{% endif %}" data-variant-id="{{ item.variant_id }}">
+            <td class="img">
+              <a href="{{ item.url }}">
+                <img src="{{ item | img_url: 'small' }}" alt="{{ item.title | escape }}" />
+                <div class="mobile-small">
+                  {{ item.product.title }}
+                </div>
+                <div class="mobile-small item__price">
+                  {% if sale %}
+                    <p><span class="item__price--sale">{{ item.variant.compare_at_price | money }}</span>
+                    {% if discounted %}
+                      <span class="item__price--aftersale">
+                        {{ item.variant.price | money }}
+                      </span>
+                    {% endif %}
+                    </p>
+                  {% endif %}
+                  {% if discounted %}
+                    {% unless sale %}
+                      <p><span class="item__price--aftersale">
+                        {{ item.variant.price | money }}
+                      </span></p>
+                    {% endunless %}
+                    {%- for discount in item.line_level_discount_allocations -%}
+                      <p class="line__discounts">
+                        <span class="item__discount__text">{{ discount.discount_application.title }}:</span>
+                        <span class="item__discount">-{{ discount.amount | divided_by: item.quantity | money }}</span>
+                      </p>
+                    {%- endfor -%}
+                  {% endif %}
+                  <p class="item__price--final">{{ item.final_price | money }}</p>
+
+                  {% if discounted and item.quantity > 1 %}
+                    {%- for discount in item.line_level_discount_allocations -%}
+                      <div>
+                        <span class="item__total__savings">
+                          <span class="cart__icon--tags">
+                            {% include 'icon-tags' %}
+                          </span>
+                          {{ 'cart.general.savings' | t }}
+                          {{ discount.amount | money_without_trailing_zeros }}
+                          {{ 'cart.general.with' | t }}
+                          {{ discount.discount_application.title }}
+                        </span>
+                      </div>
+                    {%- endfor -%}
+                  {% endif %}
+                </div>
+              </a>
+            </td>
+            <td class="desc" colspan="2">
+              <a href="{{ item.url }}">
+                {{ item.product.title }}
+                {% unless item.product.has_only_default_variant %}
+                  <br><small>{{ item.variant.title }}</small>
+                {% endunless %}
+              </a>
+
+              {% if discounted and item.quantity > 1 %}
+                {%- for discount in item.line_level_discount_allocations -%}
+                  <div>
+                    <span class="item__total__savings">
+                      <span class="cart__icon--tags">
+                        {% include 'icon-tags' %}
+                      </span>
+                      {{ 'cart.general.savings' | t }}
+                      {{ discount.amount | money_without_trailing_zeros }}
+                      {{ 'cart.general.with' | t }}
+                      {{ discount.discount_application.title }}
+                    </span>
+                  </div>
+                {%- endfor -%}
+              {% endif %}
+              <small><a href="/cart/change?id={{ item.id }}&quantity=0" class="remove-from-cart">{{ 'cart.general.remove' | t }}</a></small>
+            </td>
+
+            <td class="price item__price">
+              {% if sale %}
+                <p><span class="item__price--sale">{{ item.variant.compare_at_price | money }}</span>
+                {% if discounted %}
+                  <span class="item__price--aftersale">
+                    {{ item.variant.price | money }}
+                  </span>
+                {% endif %}
+                </p>
+              {% endif %}
+              {% if discounted %}
+                {% unless sale %}
+                  <p><span class="item__price--aftersale">
+                    {{ item.variant.price | money }}
+                  </span></p>
+                {% endunless %}
+                {%- for discount in item.line_level_discount_allocations -%}
+                  <p class="line__discounts">
+                    <span class="item__discount__text">{{ discount.discount_application.title }}:</span>
+                    <span class="item__discount">-{{ discount.amount | divided_by: item.quantity | money }}</span>
+                  </p>
+                {%- endfor -%}
+              {% endif %}
+              <p class="item__price--final">{{ item.final_price | money }}</p>
+            </td>
+            <td class="quantity center">
+              <div class="js-qty quantity-selector">
+                <span class="js-qty__adjust js-qty__adjust--minus quantity__minus"
+                      data-new-quantity="{{ item.quantity | minus: 1 }}"
+                      data-line-key="{{ item.key }}">
+                  {% include "icon-minus" %}
+                </span>
+                <input class="text quantity js-qty__num quantity__input" type="number" min="1" size="4" aria-label="quantity" pattern="[0-9]*" id="updates_{{ item.id }}" name="updates[{{ item.id }}]" value="{{ item.quantity }}" />
+                <span class="js-qty__adjust js-qty__adjust--plus quantity__plus"
+                      data-variant="{{ item.id }}">
+                  {% include "icon-plus" %}
+                </span>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="cart-info-container">
+    {%- if cart.cart_level_discount_applications.size > 0 -%}
+      <h4 class="info__subtotal--before">
+        <span class="cart__discounts__title">{{ 'layout.cart.items.other' | t | capitalize }}:</span>
+        <span class="cart__discounts__amount money">{{ cart.items_subtotal_price | money }}</span>
+      </h4>
+      {%- for discount in cart.cart_level_discount_applications -%}
+        <h4 class="info__subtotal--discounts">
+          <span class="cart__discounts__title">{{ discount.title }}:</span>
+          <span class="cart__discounts__amount money">-{{ discount.total_allocated_amount | money }}</span>
+        </h4>
+      {%- endfor -%}
+    {%- endif -%}
+    <h3 class="info__subtotal">
+      <span>{{ 'cart.general.subtotal' | t }}:</span>
+      <span class="cart__subtotal">{{ cart.total_price | money }}</span>
+    </h3>
+
+    <div class="proceed">
+      <input class="btn large-btn" type="submit" id="Checkout" name="checkout" value="{{ 'cart.general.checkout' | t }}" />
+    </div>
+    <div data-additional-insert></div>
+  </div>
+</form>

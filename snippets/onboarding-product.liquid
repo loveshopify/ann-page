@@ -1,0 +1,88 @@
+<!-- /snippets/onboarding-product.liquid -->
+
+<div class="product__wrapper">
+  <div class="grid product__page">
+    <div class="grid__item medium-up--one-half">
+      <div class="product__slides product-single__photos">
+        <div class="product__photo">
+          {{ 'product-5' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      </div>
+    </div>
+    <div class="grid__item medium-up--one-half">
+      <div class="form__wrapper">
+        <div class="form__inner__wrapper">
+          <div class="form__width">
+            <div class="product__title__wrapper">
+              <h1 class="product__title">{{ 'home_page.onboarding.product_title' | t }}</h1>
+              <div class="h5--body product__price">
+                <span>{{ '1999' | money }}</span>
+              </div>
+            </div>
+
+            <div class="js-qty quantity-selector">
+              <span class="js-qty__adjust js-qty__adjust--minus quantity__minus">{% include "icon-minus" %}</span>
+              <input type="text" class="js-qty__num quantity__input" value="1" min="1" aria-label="quantity" pattern="[0-9]*" name="quantity">
+              <span class="js-qty__adjust js-qty__adjust--plus quantity__plus">{% include "icon-plus" %}</span>
+            </div>
+
+            <div class="product__form">
+              <div class="product__submit {% if section.settings.show_payment_button %}product__submit--spb{% endif %}">
+                <div class="product__submit__buttons">
+                  <button class="btn product__submit__add" disabled="disabled">
+                      <span>{{ 'products.product.add_to_cart' | t }}</span>
+                  </button>
+
+                  {% if section.settings.show_payment_button %}
+                    <div class="shopify-payment-button">
+                      <div>
+                        <div>
+                          <div>
+                            <button type="button" class="shopify-payment-button__button shopify-payment-button__button--unbranded">{{ 'products.product.buy_it_now' | t }}</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            {%- assign description_position = '' -%}
+            {%- assign product_description_content = 'home_page.onboarding.no_description' | t -%}
+            {%- assign has_tabs = false -%}
+            {%- for block in section.blocks -%}
+              {%- if block.type == "tab_description" -%}
+                {%- assign has_tabs = true -%}
+              {%- endif -%}
+            {%- endfor -%}
+            {%-if has_tabs -%}
+              {%- assign product_description_content = product_description_content | split: '<h6>' | first -%}
+            {%- endif -%}
+
+            <div class="product-description gutter-top rte">
+                {{ product_description_content }}
+            </div>
+
+            {%- if section.blocks.size > 0 and section.settings.tabs_enable -%}
+              <div class="tabs-wrapper productTabsWrapper">
+                {% include 'product-tabs' %}
+              </div>
+            {%- endif -%}
+
+            {% if section.settings.product_show_vendor %}
+              <p class="product__vendor caps">{{ 'products.product.vendor' | t }}: <a href="#" class="text-link">Shopify</a></p>
+            {%- endif -%}
+
+            {% if section.settings.show_share_buttons %}
+              <div class="product__sharing">
+                {% include 'social-sharing', share_title: product.title, share_permalink: product.url, share_image: featured_image %}
+              </div>
+            {% endif %}
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,58 @@
+<!-- /templates/search.liquid -->
+
+<section class="page search-page">
+  <h2 class="theme">{{ 'general.search.title' | t }}</h2>
+  {% if search.performed %}
+  	{% paginate search.results by 12 %}
+      {% if search.results == empty %}
+        <div class="search-outer">
+          <div class="search-results-text center">
+            <p>{{ 'general.search.no_results_html' | t: terms: search.terms | escape }}</p>
+          </div>
+          <form action="/search" class="search-form">
+            <input type="hidden" name="type" value="product"/>
+            <input type="text" name="q" class="search-box" placeholder="{{ 'general.search.title' | t }}" value="{{ search.terms }}"/>
+            <button type="submit" class="search-submit">{{ 'general.search.submit' | t }}</button>
+          </form>
+        </div>
+      {% else %}
+      <div class="search-outer">
+        <form action="/search" class="search-form">
+          <input type="hidden" name="type" value="product"/>
+          <input type="text" name="q" class="search-box" placeholder="{{ 'general.search.title' | t }}" value="{{ search.terms }}"/>
+          <button type="submit" class="search-submit">{{ 'general.search.submit' | t }}</button>
+        </form>
+      </div>
+    	<div class="search-results-text theme gutter-bottom">
+        <p>{{ 'general.search.results_for_html' | t: terms: search.terms | escape }}</p> 
+      </div>
+        <div class="product-grid product-grid--search" id="SearchLoop">
+            {% for product in search.results %}
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+              {% include 'product-grid-item', quick_view: false %}
+            {% endfor %}
+        </div>
+      {% endif %}
+      
+      {% if settings.endless_scroll %}
+        <div class="pagination" id="SearchPagination">
+          {% if paginate.next %}
+            <a href="{{ paginate.next.url }}" class="loadMore js-loadMore"></a>
+          {% endif %}
+        </div>
+      {% else %}
+        {% include 'pagination' %}
+      {% endif %}
+
+    {% endpaginate %}
+  {% else %}
+  	<div class="search-outer">
+      <form action="/search" class="search-form">
+          <input type="hidden" name="type" value="product"/>
+          <input type="text" name="q" class="search-box" placeholder="{{ 'general.search.title' | t }}" value="{{ search.terms }}"/>
+          <button type="submit" class="search-submit">{{ 'general.search.submit' | t }}</button>
+      </form>
+    </div>
+  {% endif %}
+</section>

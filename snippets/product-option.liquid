@@ -1,0 +1,18 @@
+<div class="selector-wrapper js" data-option="option{{ option.position }}">
+  <label for="SingleOptionSelector-{{ forloop.index0 }}-{{product.id}}">
+    {{ option.name }}
+  </label>
+
+  <select
+    id="SingleOptionSelector-{{ forloop.index0 }}-{{product.id}}"
+    data-single-option-selector
+    data-index="option{{ option.position }}">
+    {% for value in option.values %}
+      <option
+        value="{{ value | escape }}"
+        {% if option.selected_value == value %}selected="selected"{% endif %}>
+        {{ value }}
+      </option>
+    {% endfor %}
+  </select>
+</div>

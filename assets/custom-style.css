@@ -1,0 +1,30 @@
+.product-item__image .product-item__bg__under,
+.product-item__image .product-item__bg {
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+.collection-item__bg {
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+.wrapp-pro{
+  display: block;
+  position: relative;
+}
+.wrapp-pro .slideup{
+  opacity: 0;
+      z-index: 0;
+  text-align: center;
+  transition: opacity .2s ease-in-out, bottom .2s ease-in-out;
+}
+.wrapp-pro:hover .slideup{
+  bottom: 0;
+  opacity: 0.9;
+}
+.wrapp-pro .slideup span{
+      cursor: pointer;
+}
+.custom-hero-space{
+    display: block;
+    margin-bottom: 40px;
+}

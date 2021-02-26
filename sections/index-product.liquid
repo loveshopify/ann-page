@@ -1,0 +1,142 @@
+<!-- /sections/index-product.liquid -->
+
+{%- assign collections_all = collections['all'] -%}
+{%- for product in collections_all.products limit: 1 -%}
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+  {%- assign first_product = product -%}
+{%- endfor -%}
+
+{%- assign product = all_products[section.settings.home_product] | default: first_product -%}
+{%- assign product = all_products[section.settings.home_product] -%}
+
+<div class="index-product"
+  data-section-id="{{ section.id }}"
+  data-section-type="product"
+  data-enable-history-state="false"
+  data-image-zoom-enable="{{ section.settings.zoom_enable }}"
+  data-aos-duration="500"
+  data-aos="fade-up">
+  {% if product.empty? %}
+    {% include 'onboarding-product' %}
+  {% else %}
+    {% include 'product' %}
+  {% endif %}
+</div>
+
+{% schema %}
+  {
+    "name": "Featured product",
+    "settings": [
+      {
+        "type": "product",
+        "id": "home_product",
+        "label": "Product"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_share_buttons",
+        "label": "Show social sharing buttons",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "product_show_vendor",
+        "label": "Show vendor",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "show_payment_button",
+        "label": "Show smart checkout button",
+        "info": "Customers will see their preferred accelerated checkout method.",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Product info tabs"
+      },
+      {
+        "type": "checkbox",
+        "id": "tabs_enable",
+        "label": "Enable tabs",
+        "default": false
+      }
+    ],
+    "blocks": [
+      {
+        "type": "tab_description",
+        "name": "Description H6",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "paragraph",
+            "content": "Heading 6 titles will be converted to tab headings, tab content will be everything between the Heading 6 titles. [Product Tabs Documentation](https://help.invisiblethemes.com/article/11-tabs)."
+          }
+        ]
+      },
+      {
+        "type": "tab_richtext",
+        "name": "Text",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Label",
+            "default": "Text tab",
+            "info": "Example: Warranty policy"
+          },
+          {
+            "type": "richtext",
+            "id": "raw_content",
+            "label": "Tab content",
+            "default": "<p>This tab content type will accept <strong>rich text</strong> to help with adding styles and links to additional pages or content. Use this to add supplementary information to help your buyers.</p>"
+          }
+        ]
+      },
+      {
+        "type": "tab_html",
+        "name": "HTML",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Label",
+            "default": "HTML tab",
+            "info": "Example: Sizing video"
+          },
+          {
+            "type": "html",
+            "id": "raw_content",
+            "label": "Tab content",
+            "default": "<p>This tab content type will accept HTML code for advanced styling. Use this to add video embeds, or other advanced HTML content.</p>"
+          }
+        ]
+      },
+      {
+        "type": "tab_page",
+        "name": "Page",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Heading",
+            "default": "Page tab",
+            "info": "Example: Size chart"
+          },
+          {
+            "type": "page",
+            "id": "raw_content",
+            "label": "Tab content"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Featured product",
+        "category": "Product"
+      }
+    ]
+  }
+{% endschema %}

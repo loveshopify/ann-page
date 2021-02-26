@@ -1,0 +1,594 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Broadcast",
+    "theme_version": "1.4.0",
+    "theme_author": "Invisible",
+    "theme_support_url": "https:\/\/help.invisiblethemes.com\/contact",
+    "theme_documentation_url": "https:\/\/help.invisiblethemes.com\/"
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "header",
+        "content": "General"
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text",
+        "default": "#282C2E"
+      },
+      {
+        "type": "color",
+        "id": "bg_color",
+        "label": "Background",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "secondary_bg_color",
+        "label": "Light background",
+        "default": "#F7F9FA",
+        "info": "Used for background accents on the home page"
+      },
+      {
+        "type": "color",
+        "id": "accent_bright",
+        "label": "Bright accent",
+        "default": "#E03386",
+        "info": "Used to for bright highlights"
+      },
+      {
+        "type": "color",
+        "id": "accent_secondary",
+        "label": "Secondary accent",
+        "default": "#42C844",
+        "info": "Used for secondary highlights"
+      },
+      {
+        "type": "color",
+        "id": "site_border_color",
+        "label": "Lines and borders",
+        "default": "#F3F3F3"
+      },
+      {
+        "type": "color",
+        "id": "link_color",
+        "label": "Links",
+        "default": "#282C2E"
+      },
+      {
+        "type": "color",
+        "id": "link_hover_color",
+        "label": "Links - hover",
+        "default": "#326077"
+      },
+      {
+        "type": "header",
+        "content": "Header bar"
+      },
+      {
+        "type": "color",
+        "id": "header_bg",
+        "label": "Background",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "header_link",
+        "label": "Links",
+        "default": "#282C2E"
+      },
+      {
+        "type": "color",
+        "id": "header_link_hover",
+        "label": "Links - hover",
+        "default": "#326077"
+      },
+      {
+        "type": "header",
+        "content": "Header navigation"
+      },
+      {
+        "type": "color",
+        "id": "menu_bg_color",
+        "label": "Background",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "menu_border_color",
+        "label": "Borders",
+        "default": "#F3F3F3"
+      },
+      {
+        "type": "color",
+        "id": "menu_link_color",
+        "label": "Links",
+        "default": "#282C2E"
+      },
+      {
+        "type": "color",
+        "id": "menu_link_hover_color",
+        "label": "Links - hover",
+        "default": "#326077"
+      },
+      {
+        "type": "color",
+        "id": "submenu_bg_color",
+        "label": "Dropdown background",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "submenu_link_color",
+        "label": "Dropdown links",
+        "default": "#282C2E"
+      },
+      {
+        "type": "color",
+        "id": "submenu_link_hover_color",
+        "label": "Dropdown links - hover",
+        "default": "#326077"
+      },
+      {
+        "type": "color",
+        "id": "menu_transparent_color",
+        "label": "Transparent header text",
+        "default": "#ffffff"
+      },
+      {
+        "type": "header",
+        "content": "Footer"
+      },
+      {
+        "type": "color",
+        "id": "footer_bg",
+        "label": "Background",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "footer_text",
+        "label": "Text",
+        "default": "#333333"
+      },
+      {
+        "type": "color",
+        "id": "footer_link",
+        "label": "Links",
+        "default": "#c0c0c0"
+      },
+      {
+        "type": "color",
+        "id": "footer_link_hover",
+        "label": "Links - hover",
+        "default": "#808080"
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Headings and buttons"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_heading_font",
+        "label": "Font",
+        "default": "rubik_n5"
+      },
+      {
+        "type": "range",
+        "id": "type_heading_size",
+        "min": 75,
+        "max": 125,
+        "step": 5,
+        "unit": "%",
+        "label": "Font size",
+        "default": 100
+      },
+      {
+        "type": "header",
+        "content": "Body text"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_base_font",
+        "label": "Font",
+        "default": "harmonia_sans_n4"
+      },
+      {
+        "type": "range",
+        "id": "type_body_size",
+        "min": 75,
+        "max": 125,
+        "step": 5,
+        "unit": "%",
+        "label": "Font size",
+        "default": 100
+      },
+      {
+        "type": "header",
+        "content": "Buttons"
+      },
+      {
+        "type": "range",
+        "id": "button_border_radius",
+        "label": "Border radius",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "unit": "px",
+        "default": 0
+      }
+    ]
+  },
+  {
+    "name": "Layout",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Animations"
+      },
+      {
+        "type": "checkbox",
+        "id": "animations_enable",
+        "label": "Enable animations",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "endless_scroll",
+        "label": "Enable endless scrolling",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Comments & Reviews",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Articles"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_disqus",
+        "label": "Enable Disqus",
+        "info": "If enabled Disqus comments will be shown on blog posts.",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "disqus_shortname",
+        "label": "Disqus shortname"
+      },
+      {
+        "type": "header",
+        "content": "Products"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_product_reviews",
+        "label": "Enable reviews",
+        "info": "Requires the [Shopify Product Reviews app](https:\/\/apps.shopify.com\/product-reviews).",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_yotpo",
+        "label": "Enable Yotpo reviews",
+        "info": "If disabled default reviews will be shown on the product pages.",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "yotpo_ID",
+        "label": "Yotpo App Key",
+        "info": "Your Yotpo App Key is in your Yotpo Account Settings.  On the Account setting page locate the Store tab then scroll to API Credentials and copy the App Key."
+      }
+    ]
+  },
+  {
+    "name": "Social media",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Social links"
+      },
+      {
+        "type": "text",
+        "id": "instagram_link",
+        "label": "Instagram",
+        "info": "https:\/\/instagram.com\/shopify"
+      },
+      {
+        "type": "text",
+        "id": "facebook_link",
+        "label": "Facebook",
+        "info": "https:\/\/facebook.com\/shopify"
+      },
+      {
+        "type": "text",
+        "id": "twitter_link",
+        "label": "Twitter",
+        "info": "https:\/\/twitter.com\/shopify"
+      },
+      {
+        "type": "text",
+        "id": "youtube_link",
+        "label": "YouTube",
+        "info": "https:\/\/youtube.com\/shopify"
+      },
+      {
+        "type": "text",
+        "id": "vimeo_link",
+        "label": "Vimeo",
+        "info": "https:\/\/vimeo.com\/shopify"
+      },
+      {
+        "type": "text",
+        "id": "pinterest_link",
+        "label": "Pinterest",
+        "info": "https:\/\/pinterest.com\/shopify"
+      },
+      {
+        "type": "text",
+        "id": "tumblr_link",
+        "label": "Tumblr",
+        "info": "http:\/\/shopify.tumblr.com"
+      },
+      {
+        "type": "text",
+        "id": "atom_link",
+        "label": "Blog feed"
+      },
+      {
+        "type": "header",
+        "content": "Sharing options"
+      },
+      {
+        "type": "checkbox",
+        "id": "share_facebook",
+        "label": "Share on Facebook",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "share_twitter",
+        "label": "Tweet on Twitter",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "share_pinterest",
+        "label": "Pin on Pinterest",
+        "default": true
+      },
+      {
+        "type": "image_picker",
+        "id": "social_home_image",
+        "label": "Default share image",
+        "info": "Shown when your homepage and pages without featured images are shared."
+      }
+    ]
+  },
+  {
+    "name": "Product grid",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "color_swatches",
+        "label": "Enable color swatches",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "variant_lines",
+        "label": "Show variants as boxes",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Product images"
+      },
+      {
+        "type": "checkbox",
+        "label": "Show second image on hover",
+        "id": "image_hover_enable",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "product_grid_aspect_ratio",
+        "min": 0.5,
+        "max": 1.5,
+        "step": 0.1,
+        "unit": ":1",
+        "label": "Product photo aspect ratio",
+        "info": "Wide to tall",
+        "default": 1
+      },
+      {
+        "type": "header",
+        "content": "Sale tags"
+      },
+      {
+        "type": "checkbox",
+        "id": "sale_tags_enable",
+        "label": "Show sale tags",
+        "default": true
+      },
+      {
+        "type": "color",
+        "id": "sale_background_color",
+        "label": "Sale tag background",
+        "default": "#444444"
+      },
+      {
+        "type": "color",
+        "id": "sale_text_color",
+        "label": "Sale tag text",
+        "default": "#ffffff"
+      },
+      {
+        "type": "header",
+        "content": "Quick view"
+      },
+      {
+        "type": "checkbox",
+        "id": "addtocart_enable",
+        "label": "Enable ADD TO CART",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "quickview_enable",
+        "label": "Enable quick view",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "quickview_buybutton_enable",
+        "label": "Show smart checkout button in quick view",
+        "info": "Customers will see their preferred accelerated checkout method.",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Newsletter popup",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "show_promo_modal",
+        "label": "Enable",
+        "info": "Popup will display on the Home page.",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "promo_dev_mode",
+        "label": "Enable testing mode",
+        "info": "Popup will show ever time the page is refreshed. This setting should not be used once your site is published.",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "promo_modal_subtitle",
+        "label": "Subtitle",
+        "default": "Broadcast"
+      },
+      {
+        "type": "text",
+        "id": "promo_modal_title",
+        "label": "Title",
+        "default": "Newsletter"
+      },
+      {
+        "id": "promo_modal_richtext",
+        "type": "richtext",
+        "label": "Description",
+        "default": "<p>Subscribe to get special offers, free giveaways, and once-in-a-lifetime deals.<\/p>"
+      },
+      {
+        "type": "text",
+        "id": "promo_button_text",
+        "label": "Button text",
+        "default": "Join"
+      },
+      {
+        "type": "image_picker",
+        "id": "promo_image",
+        "label": "Image"
+      },
+      {
+        "type": "header",
+        "content": "Colors"
+      },
+      {
+        "type": "color",
+        "id": "promo_bg_color",
+        "label": "Background",
+        "default": "#fff"
+      },
+      {
+        "type": "select",
+        "id": "promo_text_color",
+        "label": "Text",
+        "default": "dark",
+        "options": [
+          {
+            "value": "light",
+            "label": "Light"
+          },
+          {
+            "value": "dark",
+            "label": "Dark"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Favicon",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon image",
+        "info": "Will be scaled down to 32 x 32px"
+      }
+    ]
+  },
+  {
+    "name": "Currency",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "To offer multiple currencies on your online store, you must first [edit your store's currency formatting](https:\/\/docs.shopify.com\/support\/settings\/general\/tell-my-script-where-to-find-money-formats)."
+      },
+      {
+        "type": "checkbox",
+        "id": "show_multiple_currencies",
+        "label": "Enable currency conversion",
+        "default": false,
+        "info": "Even though prices are displayed in different currencies, orders will still be processed in your store's currency."
+      },
+      {
+        "type": "select",
+        "id": "currency_format",
+        "label": "Format",
+        "options": [
+          {
+            "value": "money_format",
+            "label": "Without currency ($10.00)"
+          },
+          {
+            "value": "money_with_currency_format",
+            "label": "With currency ($10.00 USD)"
+          }
+        ],
+        "default": "money_with_currency_format"
+      },
+      {
+        "type": "text",
+        "id": "supported_currencies",
+        "label": "Supported currencies",
+        "default": "INR GBP CAD USD AUD EUR JPY",
+        "info": "Use the country's ISO [currency code](http:\/\/www.xe.com\/iso4217.php). Separate your currency codes with a space."
+      },
+      {
+        "type": "text",
+        "id": "default_currency",
+        "label": "Default currency",
+        "default": "USD"
+      }
+    ]
+  }
+]

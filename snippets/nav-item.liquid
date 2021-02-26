@@ -1,0 +1,48 @@
+{%- assign parent = false -%}
+{%- if link.levels == 1 -%}
+  {%- assign parent = true -%}
+{%- endif -%}
+{%- assign grandparent = false -%}
+{%- if link.levels == 2 -%}
+  {%- assign grandparent = true -%}
+{%- endif -%}
+{%- assign child_count = 0 -%}
+{%- if grandparent -%}
+  {%- assign child_count = link.links.size -%}
+  {%- if child_count > 10 -%}
+    {%- assign child_count = 10 -%}
+  {%- endif -%}
+{%- endif -%}
+{%- capture link_id -%}{{ link.title | handleize }}-{{ seed }}-{{ version }}{%- endcapture -%}
+
+
+{% include 'nav-item-megamenu' %}
+
+
+<li class="{% if grandparent or has_megamenu %}grandparent kids-{{ child_count }}{% elsif parent %}parent{% else %}child{%endif%} {% if link.current %}main-menu--active{% endif %}">
+  <a href="{{ link.url }}" class="nav-link">
+    {{ link.title | escape }}
+    {% if parent or grandparent or has_megamenu %}<span class="nav-carat-small">{% include 'icon-arrow-right' %}</span>{% endif %}
+  </a>
+  {% if parent or grandparent or has_megamenu %}
+    <a href="#" class="nav-carat ariaToggle" aria-haspopup="true" aria-controls="{{ link_id }}" aria-expanded="false">
+      <span class="visually-hidden">+</span>
+      {% include 'icon-arrow-right' %}
+    </a>
+
+    <div class="main-menu-dropdown {% if has_megamenu %}main-menu-dropdown--megamenu{% endif %} {% if parent or grandparent %}main-menu-dropdown--has-links{% endif %}" id="{{ link_id }}">
+      <ul>
+        {% if has_megamenu %}
+          {{ megamenu }}
+        {% endif %}
+
+        {% if parent or grandparent %}
+          {% for link in link.links %}
+            {%- assign toplevel = false -%}
+            {% include 'nav-item' %}
+          {% endfor %}
+        {% endif %}
+      </ul>
+    </div>
+  {% endif %}
+</li>

@@ -1,0 +1,10 @@
+<!-- /templates/collection-template.liquid -->
+
+{% section 'collection' %}
+
+<script>
+  window.theme = window.theme || {};
+  theme.collectionStrings = {
+    sortBy: '{{ collection.sort_by | default: collection.default_sort_by }}'
+  }
+</script>

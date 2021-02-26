@@ -1,0 +1,71 @@
+<!-- /snippets/collection-block.liquid -->
+
+<div class="collection-block">
+  <div class="collection-block__content">
+    <h2 class="collection-block__title">
+      {% if collection_title != blank %}
+        {{ collection_title }}
+      {% else %}
+        {{ collection.title }}
+      {% endif %}
+    </h2>
+    {% if collection.description != ''  %}
+      <p>{{ collection.description }}</p>
+    {% endif %}
+    <a class="collection-block__button btn btn--neutral btn--secondary btn--large caps" href="{{ collection.url }}">{{ 'collections.general.view_collection' | t }}</a>
+
+  </div>
+  {%- if collection.image != blank -%}
+    {%- assign img_object = collection.image -%}
+    {%- assign img_small = collection.image | img_url: '18x' -%}
+    {%- assign img_api = collection.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+  {%- elsif section.settings.display_type == 'selected' and block.settings.collection == blank -%}
+    {%- assign img_object = 'blank.svg' | asset_url -%}
+    {%- assign img_small =  'blank.svg' | asset_url -%}
+    {%- assign img_api = 'blank.svg' | asset_url -%}
+  {%- else -%}
+    {%- assign img_object = 'blank.png' | asset_url -%}
+    {%- assign img_small =  'blank.png' | asset_url -%}
+    {%- assign img_api = 'blank.png' | asset_url -%}
+  {%- endif -%}
+  {%- if block.settings.image -%}
+    {%- assign img_object = block.settings.image -%}
+    {%- assign img_small = block.settings.image | img_url: '18x' -%}
+    {%- assign img_api = block.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+  {%- endif -%}
+  <a href="{{ collection.url }}" class="collection-block__image">
+    <div class="collection-block__image-bg lazyload" data-bgset="{% include 'bgset', image: img_object %}"></div>
+    <noscript>
+      <div class="collection-block__image-bg no-js-image" style="background-image: url( {{ img_object | img_url: '1024x' }} )"></div>
+    </noscript>
+  </a>
+</div>
+
+<section class="index-products" data-section-id="{{ section.id }}" data-section-type="featured-products" data-reviews="{{ showReviews }}" data-swatches="{{ enableSwatches }}">
+  <div class="product-grid product-grid--{{ section.settings.scroll }} {% if section.settings.scroll == 'horizontally' %}flickity-slider--default{% endif %}" id="FrontpageColl"  data-arrows-style="dark">
+    {% if collection.products.size > 0 %}
+      {% for product in collection.products limit: limit  %}
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+        {% assign grid_int = section.settings.grid | times:1 %}
+        {% assign animation_delay = forloop.index0  | modulo:grid_int | times:1 %}
+        {% include 'product-grid-item', quick_view: showQuickView %}
+      {% endfor %}
+    {% elsif section.settings.display_type == 'selected' and block.settings.collection == blank %}
+      {% for i in (1..limit) %}
+        {% include 'product-grid-item', quick_view: showQuickView, fallback: true %}
+      {% endfor %}
+    {% endif %}
+  </div>
+  {% if showQuickView and collection.products.size > 0 %}
+    {% for product in collection.products limit: limit %}
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+      <div class="modal__overlay quicklook" id="Product{{ forloop.index0 }}-{{collection.id}}">
+        <section class="modal__outer">
+          {% include 'product-quick-view' %}
+        </section>
+      </div>
+    {% endfor %}
+  {% endif %}
+</section>

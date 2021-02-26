@@ -1,0 +1,96 @@
+<div id="cart-bar" class="cart-bar" data-position="{{ section.settings.cart_bar_position }}">
+  <div class="form__wrapper" data-form-wrapper>
+    {%- form 'product', product, class: 'product-form cart-bar__form', data-swatches: 'false' -%}
+      {% unless product.has_only_default_variant %}
+        <div class="product__selectors">
+          {% for option in product.options_with_values %}
+            <div class="selector-wrapper js" data-option="option{{ option.position }}">
+              <select
+                data-id="SingleOptionSelector-{{ forloop.index0 }}-{{product.id}}"
+                data-single-option-selector
+                data-index="option{{ option.position }}">
+                {% for value in option.values %}
+                  <option
+                    value="{{ value | escape }}"
+                    {% if option.selected_value == value %}selected="selected"{% endif %}>
+                      {{ value }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+          {% endfor %}
+        </div>
+      {% endunless %}
+
+      <select name="id" class="no-js" data-product-select>
+        {% for variant in product.variants %}
+          <option
+            {% if variant == current_variant %}selected="selected"{% endif %}
+            {% unless variant.available %}disabled="disabled"{% endunless %}
+            value="{{ variant.id }}">
+              {{ variant.title }}
+          </option>
+        {% endfor %}
+      </select>
+
+      <input type="hidden" name="quantity" value="1" aria-label="quantity">
+
+      <div class="product__submit" data-product-id="{{ product.id }}">
+        <div class="product__submit__buttons">
+          <button
+            type="submit"
+            name="add"
+            class="btn product__submit__add"
+            data-add-to-cart
+            {% unless current_variant.available %}disabled="disabled"{% endunless %}>
+              <span data-add-to-cart-text>
+                {% if current_variant.available %}
+                  {{ 'products.product.add_to_cart' | t }}
+                {% else %}
+                  {{ 'products.product.sold_out' | t }}
+                {% endif %}
+              </span>
+          </button>
+        </div>
+      </div>
+    {%- endform -%}
+
+    <div class="cart-bar__info">
+      {%- assign image = product.featured_image -%}
+      {%- assign img_object = block.settings.button_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+      {%- assign image_widths = '90,180,360,540' -%}
+      <div class="cart-bar__image">
+        <img
+           class="lazyload fade-in"
+           src="{{ image | img_url: '180x' }}"
+           data-src="{{ img_button }}"
+           data-widths= "[{{ image_widths }}]"
+           data-aspectratio="{{ image.aspect_ratio }}"
+           data-sizes="auto"
+           alt="{{ image.alt | escape }}"
+           itemprop="image"
+           >
+         <noscript>
+          <img src="{{ image | img_url: 'small' }}" alt="{{ image.alt | escape }}">
+        </noscript>
+      </div>
+
+      <h4 class="cart-bar__product__title">{{ product.title }}</h1>
+      <div class="h5--body cart-bar__product__price product__price" data-price-wrapper>
+        <span data-product-price {% if current_variant.compare_at_price > current_variant.price %} class="product__price--sale"{% endif %}>
+          {{ current_variant.price | money }}
+        </span>
+
+        {% if product.compare_at_price_max > product.price %}
+          <span class="visually-hidden" data-compare-text>{{ 'products.product.regular_price' | t }}</span>
+          <s class="product__price--strike" data-compare-price>
+            {% if current_variant.compare_at_price > current_variant.price %}
+              {{ current_variant.compare_at_price | money }}
+            {% endif %}
+          </s>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end add-to-cart -->

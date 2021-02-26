@@ -1,0 +1,151 @@
+<!-- /sections/index-products.liquid -->
+
+{% assign featured_collection_handle = section.settings.featured_collection %}
+{% assign featured_collection = collections[featured_collection_handle] %}
+{% assign showQuickView = settings.quickview_enable %}
+{% assign showReviews = section.settings.enable_reviews %}
+{% assign enableSwatches = settings.color_swatches %}
+
+{% case section.settings.grid %}
+  {% when 2 %}
+    {% assign grid_width_large = 'large-up--one-half' %}
+    {% assign grid_width_medium = 'medium--one-half' %}
+    {% assign grid_width_small = 'small--one-half' %}
+  {% when 3 %}
+    {% assign grid_width_large = 'large-up--one-third' %}
+    {% assign grid_width_medium = 'medium--one-third' %}
+    {% assign grid_width_small = 'small--one-whole' %}
+  {% when 4 %}
+    {% assign grid_width_large = 'large-up--one-quarter' %}
+    {% assign grid_width_medium = 'medium--one-half' %}
+    {% assign grid_width_small = 'small--one-half' %}
+  {% when 5 %}
+    {% assign grid_width_large = 'large-up--one-fifth' %}
+    {% assign grid_width_medium = 'medium--one-third' %}
+    {% assign grid_width_small = 'small--one-half' %}
+  {% else %}
+    {% assign grid_width_large = 'large-up--one-sixth' %}
+    {% assign grid_width_medium = 'medium--one-third' %}
+    {% assign grid_width_small = 'small--one-half' %}
+{% endcase %}
+
+{% assign grid_items = 'section.settings.grid ' %}
+
+{%- assign limit = section.settings.grid | times: section.settings.rows -%}
+
+<section class="index-products" data-section-id="{{ section.id }}" data-section-type="featured-products" data-reviews="{{ showReviews }}" data-swatches="{{ enableSwatches }}">
+  {% assign featured_products_heading = section.settings.title %}
+  {% if featured_products_heading != blank %}
+    <h2 class="theme coll-heading">{{ featured_products_heading }}</h2>
+  {% endif %}
+
+  <div class="product-grid product-grid--{{ section.settings.scroll }} {% if section.settings.scroll == 'horizontally' %}flickity-slider--default{% endif %}" id="FrontpageColl"  data-arrows-style="{{ section.settings.arrows_style }}">
+    {% if featured_collection.products.size > 0 %}
+      {% for product in featured_collection.products limit: limit  %}
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+        {% assign grid_int = section.settings.grid | times:1 %}
+        {% assign animation_delay = forloop.index0  | modulo:grid_int | times:1 %}
+        {% include 'product-grid-item', quick_view: showQuickView %}
+        {% if showQuickView and featured_collection.products.size > 0 %}
+            <div class="modal__overlay quicklook" id="Product{{ forloop.index0 }}-{{section.id}}">
+              <section class="modal__outer">
+                {% include 'product-quick-view' %}
+              </section>
+            </div>
+        {% endif %}
+      {% endfor %}
+    {% else %}
+      {% for i in (1..limit) %}
+        {% include 'product-grid-item', quick_view: showQuickView, fallback: true %}
+      {% endfor %}
+    {% endif %}
+  </div>
+</section>
+
+
+{% schema %}
+  {
+      "name": "Featured collection",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Collection"
+        },
+        {
+          "type": "collection",
+          "id": "featured_collection",
+          "label": "Collection"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Featured collection"
+        },
+        {
+          "type":    "range",
+          "id":      "grid",
+          "min":     2,
+          "max":     6,
+          "step":    1,
+          "label":   "Products per row",
+          "default": 4
+        },
+        {
+          "type":    "range",
+          "id":      "rows",
+          "min":     1,
+          "max":     8,
+          "step":    1,
+          "label":   "Number of rows",
+          "default": 1
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_reviews",
+          "label": "Enable reviews",
+          "default": false,
+          "info": "Install Shopify's free [Product Reviews app](https://apps.shopify.com/product-reviews) before enabling this option."
+        },
+        {
+          "type": "select",
+          "id": "scroll",
+          "label": "Mobile layout",
+          "options": [
+            {
+              "label": "Scroll horizontally",
+              "value": "horizontally"
+            },
+            {
+              "label": "Scroll vertically",
+              "value": "vertically"
+            }
+          ],
+          "default": "horizontally"
+        },
+        {
+          "type": "select",
+          "id": "arrows_style",
+          "label": "Arrows style",
+          "default": "dark",
+          "options": [
+            {
+              "value": "dark",
+              "label": "Dark"
+            },
+            {
+              "value": "light",
+              "label": "Light"
+            }
+          ]
+        }
+      ],
+      "presets": [
+        {
+          "category": "Collection",
+          "name": "Featured collection"
+        }
+      ]
+  }
+{% endschema %}

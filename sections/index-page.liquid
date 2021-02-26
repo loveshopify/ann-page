@@ -1,0 +1,84 @@
+<!-- /sections/index-page.liquid -->
+
+{% assign wrapper = 'wrapper--wide' %}
+{% if section.settings.full_width %}
+  {% assign wrapper = '' %}
+{% endif %}
+
+{% assign text_center = '' %}
+{% if section.settings.text_center %}
+  {% assign text_center = 'text-center' %}
+{% endif %}
+
+<section class="index-page" style="background-color: {{ section.settings.bg_color }};">
+    <div class="{{ wrapper }}" data-aos-duration="500" data-aos="fade-up">
+      <div class="grid">
+        {% if section.settings.page != blank or page.empty? %}
+          {% assign page = pages[section.settings.page] %}
+          {% assign page_src = page.content | escape %}
+
+          {% assign homepage_page_grid = 'grid__item one-whole' %}
+          {% if section.settings.full_width %}
+            {% assign homepage_page_grid = '' %}
+          {% endif %}
+          <div class="grid__item one-whole">
+            {% if section.settings.show_title %}
+              <h3 class="{{ text_center }}">{{ page.title | escape }}</h3>
+            {% endif %}
+            <div class="rte index-page__content {{ text_center }}">
+              {{ page.content }}
+            </div>
+          </div>
+        {% else %}
+          <div class="grid__item large-up--five-sixths push--large-up--one-twelfth">
+            <div class="rte index-page__content {{ text_center }}">
+              {{ 'home_page.onboarding.no_content' | t }}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+</section>
+
+{% schema %}
+  {
+    "name": "Page",
+    "settings": [
+    {
+      "id": "page",
+      "type": "page",
+      "label": "Page"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_title",
+      "label": "Show page title",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "text_center",
+      "label": "Center text",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Page",
+      "category": "Text"
+    }
+  ]
+}
+{% endschema %}

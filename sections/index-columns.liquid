@@ -1,0 +1,217 @@
+<!-- /sections/index-columns.liquid -->
+<style>
+.index-columns--{{section.id}} .column__image{ padding-top: {{ section.settings.photo_aspect_ratio | times: 100 }}%; }
+</style>
+
+<div class="index-columns index-columns--{{ section.id }}">
+  <div class="wrapper--columns">
+    <div class="grid {% unless section.blocks.size == 5 %}grid--uniform{% endunless %}">
+      {%- assign grid_item_width = 'large-up--one-third medium--one-third' -%}
+      {% case section.blocks.size %}
+        {% when 1 %}
+          {%- assign grid_item_width = 'medium-up--one-half medium-up--push-one-quarter' -%}
+        {% when 2 %}
+          {%- assign grid_item_width = 'medium-up--one-half' -%}
+        {% when 4 %}
+          {%- assign grid_item_width = 'medium-up--one-half' -%}
+      {% endcase %}
+      {% for block in section.blocks %}
+
+        {% if section.blocks.size == 5 and forloop.index < 3 %}
+          {%- assign column_width = 'large-up--one-half medium--one-half' -%}
+        {% else %}
+          {%- assign column_width = grid_item_width -%}
+        {% endif %}
+        {% if section.blocks.size == 5 and forloop.index == 3 %}<div class="clearfix"></div>{% endif %}
+        <div class="grid__item column__grid__item {{ column_width }} {{ section.settings.align_text }}" {{ block.shopify_attributes }}>
+          {% if block.settings.enable_image %}
+            <div class="column__image__wrapper">
+              {% if block.settings.image != blank %}
+                {% assign img_url = block.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' %}
+                {%- if section.settings.equalize_height -%}
+                  <div class="column__image">
+                    <div class="column__image__bg lazyload fade-in"
+                      data-aos="img-in"
+                      data-aos-delay="{{ forloop.index0  | times: 150 }}"
+                      data-aos-duration="{{ forloop.index0 | times: 100 | plus: 800 }}"
+                      data-aos-easing="ease-out-quart"
+                      data-bgset="{% include 'bgset', image: img_url %}"></div>
+                  </div>
+                {%- else -%}
+                  <div class="lazy-image" style="padding-top:{{ 1 | divided_by: block.settings.image.aspect_ratio | times: 100}}%; background-image:  url('{{ block.settings.image | img_url: '1x1' }}');">
+                    <img class="lazyload fade-in"
+                      alt="{{ block.settings.image.alt }}"
+                      data-aos="img-in"
+                      data-aos-delay="{{ forloop.index0 | times: 150 }}"
+                      data-aos-duration="{{ forloop.index0 | times: 100 | plus: 800 }}"
+                      data-aos-easing="ease-out-quart"
+                      data-src="{{ img_url }}"
+                      data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048, 2450, 2700, 3000, 3350, 3750, 4100]"
+                      data-aspectratio="{{  block.settings.image.aspect_ratio }}"
+                      data-parent-fit="cover"
+                      data-sizes="auto"/>
+                  </div>
+                {%- endif -%}
+
+                {% if block.settings.enable_video %}
+                  {%- if block.settings.video_link.type == 'youtube' -%}
+                    {% capture video_link %}https://www.youtube.com/watch?v={{ block.settings.video_link.id }}{% endcapture %}
+                  {%- elsif block.settings.video_link.type == 'vimeo' -%}
+                    {% capture video_link %}https://vimeo.com/{{ block.settings.video_link.id }}{% endcapture %}
+                  {%- endif -%}
+                  <a href="{{ video_link }}" class="column__image__link icon__play--column" data-video-popup>
+                    {% include 'icon-play' %}
+                    <span class="icon-fallback-text">&#9658;</span>
+                  </a>
+                {% elsif block.settings.button_label == '' and block.settings.button_link != blank %}
+                  <a class="column__image__link" href="{{ block.settings.button_link }}"></a>
+                {% endif %}
+
+                <noscript>
+                  <img src="{{ block.settings.image | img_url: '540x' }}" alt="{{ block.settings.image.alt | default: block.settings.title }}"/>
+                </noscript>
+              {% else %}
+                <p>
+                  {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+                </p>
+              {% endif %}
+            </div>
+          {% endif %}
+          {% if block.settings.title != blank %}
+            <h5 class="column__heading">{{ block.settings.title | escape }}</h5>
+          {% endif %}
+          {% if block.settings.text != blank %}
+            <div class="column__text rte">{{ block.settings.text }}</div>
+          {% endif %}
+          {% if block.settings.button_label != blank and block.settings.button_link != blank %}
+            <a href="{{ block.settings.button_link }}" class="btn btn--secondary btn--small caps">
+              {{ block.settings.button_label | escape }}
+            </a>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if section.blocks.size == 0 %}
+      {% include 'no-blocks' %}
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Text columns with images",
+    "class": "index-section",
+    "settings": [
+      {
+        "type": "select",
+        "id": "align_text",
+        "label": "Text alignment",
+        "default": "text-left",
+        "options": [
+          {
+            "value": "text-left",
+            "label": "Left"
+          },
+          {
+            "value": "text-center",
+            "label": "Centered"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "equalize_height",
+        "label": "Equalize image heights",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "photo_aspect_ratio",
+        "min": 0.5,
+        "max": 1.5,
+        "step": 0.1,
+        "unit": ":1",
+        "label": "Photo aspect ratio",
+        "info": "Wide to tall",
+        "default": 1
+      }
+    ],
+    "blocks": [
+      {
+        "type": "text_block",
+        "name": "Column",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "enable_image",
+            "label": "Show image",
+            "default": true
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Heading",
+            "default": "Add a title or tagline"
+          },
+          {
+            "type": "richtext",
+            "id": "text",
+            "label": "Text",
+            "default": "<p>Share blog posts, products, or promotions with your customers. Use this text to describe products, share details on availability and style, or as a space to display recent reviews or FAQs.</p>"
+          },
+          {
+            "type": "text",
+            "id": "button_label",
+            "label": "Button label",
+            "info": "Leave blank to link from image"
+          },
+          {
+            "type": "url",
+            "id": "button_link",
+            "label": "Button link"
+          },
+          {
+            "type": "header",
+            "content": "Video Popup"
+          },
+          {
+            "type": "checkbox",
+            "id": "enable_video",
+            "label": "Show video",
+            "default": false
+          },
+          {
+            "type": "video_url",
+            "id": "video_link",
+            "label": "Video link",
+            "accept": ["youtube", "vimeo"],
+            "info": "https://www.youtube.com/watch?v=123456789"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Text columns with images",
+        "category": "Text",
+        "blocks": [
+          {
+            "type": "text_block"
+          },
+          {
+            "type": "text_block"
+          },
+          {
+            "type": "text_block"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,167 @@
+<!-- /sections/list-collections.liquid -->
+
+{%- assign showQuickView = settings.quickview_enable -%}
+{%- assign showReviews = section.settings.enable_reviews -%}
+{%- assign enableSwatches = settings.color_swatches -%}
+
+{%- case section.settings.grid -%}
+  {%- when 2 -%}
+    {%- assign grid_width_large = 'large-up--one-half' -%}
+    {%- assign grid_width_medium = 'medium--one-half' -%}
+    {%- assign grid_width_small = 'small--one-half' -%}
+  {%- when 3 -%}
+    {%- assign grid_width_large = 'large-up--one-third' -%}
+    {%- assign grid_width_medium = 'medium--one-third' -%}
+    {%- assign grid_width_small = 'small--one-whole' -%}
+  {%- when 4 -%}
+    {%- assign grid_width_large = 'large-up--one-quarter' -%}
+    {%- assign grid_width_medium = 'medium--one-half' -%}
+    {%- assign grid_width_small = 'small--one-half' -%}
+  {%- when 5 -%}
+    {%- assign grid_width_large = 'large-up--one-fifth' -%}
+    {%- assign grid_width_medium = 'medium--one-third' -%}
+    {%- assign grid_width_small = 'small--one-half' -%}
+  {%- else -%}
+    {%- assign grid_width_large = 'large-up--one-sixth' -%}
+    {%- assign grid_width_medium = 'medium--one-third' -%}
+    {%- assign grid_width_small = 'small--one-half' -%}
+{%- endcase -%}
+
+{%- assign grid_items = 'section.settings.grid ' -%}
+{%- assign limit = section.settings.grid | times: section.settings.rows -%}
+{%- assign heading = section.settings.title -%}
+
+<div class="index-list-collections">
+  {%- if heading != blank -%}
+  <h2 class="theme coll-heading">{{ heading }}</h2>
+  {%- endif -%}
+
+  <div class="container">
+    <div class="collection-list">
+      {%- if section.settings.display_type == 'all' -%}
+        {%- for collection in collections -%}
+          {%- unless collection.handle == 'frontpage' -%}
+
+            <div class="collection-block__wrapper collection-block__wrapper--{{ collection.handle }}">
+              {%- include 'collection-block' -%}
+            </div>
+          {%- endunless -%}
+        {%- endfor -%}
+      {%- else -%}
+        {%- for block in section.blocks -%}
+          {%- assign collection = collections[block.settings.collection] -%}
+          {%- assign collection_title = block.settings.collection_name -%}
+
+          <div class="collection-block__wrapper collection-block__wrapper--{{ block.id }}" {{ block.shopify_attributes }}>
+            {%- include 'collection-block' -%}
+          </div>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+
+{% schema %}
+{
+  "name": "Collection list",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "All of your collections are listed by default. To customize your list, choose 'Selected' and add collections."
+    },
+    {
+      "type": "radio",
+      "id": "display_type",
+      "label": "Select collections to show",
+      "default": "all",
+      "options": [
+        {
+          "value": "all",
+          "label": "All"
+        },
+        {
+          "value": "selected",
+          "label": "Selected"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Collections"
+    },
+    {
+      "type": "header",
+      "content": "Product grid"
+    },
+    {
+      "type":    "range",
+      "id":      "grid",
+      "min":     1,
+      "max":     6,
+      "step":    1,
+      "label":   "Products per row",
+      "default": 4
+    },
+    {
+      "type":    "range",
+      "id":      "rows",
+      "min":     1,
+      "max":     8,
+      "step":    1,
+      "label":   "Number of rows",
+      "default": 1
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_reviews",
+      "label": "Enable reviews",
+      "default": false,
+      "info": "Install Shopify's free [Product Reviews app](https://apps.shopify.com/product-reviews) before enabling this option."
+    },
+    {
+      "type": "select",
+      "id": "scroll",
+      "label": "Mobile layout",
+      "options": [
+        {
+          "label": "Scroll horizontally",
+          "value": "horizontally"
+        },
+        {
+          "label": "Scroll vertically",
+          "value": "vertically"
+        }
+      ],
+      "default": "horizontally"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Collection",
+      "settings": [
+        {
+          "label": "Collection",
+          "id": "collection",
+          "type": "collection"
+        },
+        {
+          "label": "Collection name",
+          "id": "collection_name",
+          "type": "text",
+          "info": "Replace the collection name with custom text"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "Replace the collection image with a custom image"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

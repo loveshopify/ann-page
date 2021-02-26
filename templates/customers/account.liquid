@@ -1,0 +1,39 @@
+<!-- /templates/customers/account.liquid -->
+
+<section class="account">
+	<div class="just">
+      {% include 'account-menu' %}
+      <div class="account-main">
+          <h2 class="theme">{{ 'customer.orders.title' | t }}</h2>
+					{% paginate customer.orders by 20 %}
+	          {% if customer.orders.size != 0 %}
+	          <table>
+	              <thead>
+	                  <tr>
+	                      <th class="order-number">{{ 'customer.orders.order_number' | t }}</th>
+	                      <th class="date">{{ 'customer.orders.date' | t }}</th>
+	                      <th class="payment-status">{{ 'customer.orders.payment_status' | t }}</th>
+	                      <th class="fulfillment-status">{{ 'customer.orders.fulfillment_status' | t }}</th>
+	                      <th class="total">{{ 'customer.orders.total' | t }}</th>
+	                  </tr>
+	              </thead>
+	              <tbody>
+	                  {% for order in customer.orders %}
+	                  <tr class="{% cycle 'odd', 'even' %} {% if order.cancelled %}cancelled_order{% endif %}">
+	                      <td class="order-number">{{ order.name | link_to: order.customer_url }}</td>
+	                      <td class="date"><span class="note">{{ order.created_at | date: format: 'full_date' }}</span></td>
+	                      <td class="payment-status"><span>{{ order.financial_status_label }}</span></td>
+	                      <td class="fulfillment-status"><span>{{ order.fulfillment_status_label }}</span></td>
+	                      <td class="total"><span class="total money">{{ order.total_price | money }}</span></td>
+	                  </tr>
+	              {% endfor %}
+	              </tbody>
+	          </table>
+	          {% else %}<p>{{ 'customer.orders.none' | t }}</p>{% endif %}
+
+				  	{% include 'pagination' %}
+
+					{% endpaginate %}
+      </div>
+    </div>
+</section>

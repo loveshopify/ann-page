@@ -1,0 +1,158 @@
+<!-- /sections/newsletter.liquid -->
+{%- assign img_url = section.settings.bg_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+
+<style>
+  {%- if section.settings.text_color == 'white' -%}
+    .index-newsletter-{{ section.id }},
+    .index-newsletter-{{ section.id }} .input-group.newsletter-form input { color: #fff; }
+  {%- endif -%}
+</style>
+
+<div class="index-newsletter index-newsletter-{{ section.id }}" data-section-id="{{ section.id }}" data-section-type="newsletter">
+  <div class="wide-image js-overflow-container {{ section.settings.height }}"
+    data-aos-duration="500"
+    data-aos="fade-up">
+    <div class="hero__content__wrapper hero__content--transparent {{ section.settings.flex_align }}">
+      <div class="hero__content hero__content--{{ section.settings.width }} js-overflow-content">
+        <div class="newsletter__content">
+          {% if section.settings.title != '' %}
+            <h5 class="newsletter__title">{{ section.settings.title }}</h5>
+          {% endif %}
+          {% if collection.description != '' %}
+          <div class="rte">
+            {{ section.settings.richtext }}
+          </div>
+          {% endif %}
+          <div class="newsletter-signup">
+             {% include 'newsletter-form' %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% if section.settings.bg_image %}
+      {% if section.settings.height == 'image-height' %}
+        <img class="lazyload responsive-wide-image"
+          alt="{{ section.settings.bg_image.alt | default: section.settings.title }}"
+          src="{{ section.settings.bg_image | img_url: '18x'  }}"
+          data-src="{{ img_url }}"
+          data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048, 2450, 2700, 3000, 3350, 3750, 4100]"
+          data-aspectratio="{{ section.settings.bg_image.aspect_ratio }}"
+          data-parent-fit="cover"
+          data-sizes="auto"/>
+      {% else %}
+        <div class="background-size-cover lazyload"  data-bgset="{% include 'bgset', image: section.settings.bg_image %}"></div>
+      {% endif %}
+      <noscript>
+        <img src="{{ section.settings.bg_image | img_url: '1440x' }}" alt="{{ section.settings.bg_image.alt | default: collection.title }}" class="responsive-wide-image"/>
+      </noscript>
+      {% assign overlay_opacity = section.settings.overlay_opacity | times: 0.01 %}
+      <div class="image-overlay" style="background-color:{{ section.settings.overlay_color }} !important; opacity:{{ overlay_opacity }};"></div>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Newsletter",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Newsletter"
+    },
+    {
+      "id": "richtext",
+      "type": "richtext",
+      "label": "Subheading",
+      "default": "<p>Subscribe to get special offers, free giveaways, and once-in-a-lifetime deals.</p>"
+    },
+    {
+      "type": "paragraph",
+      "content": "Subscribers are under 'Accepts Marketing' in your [customer admin](/admin/customers)."
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "default": "full",
+      "options": [
+        { "value": "full", "label": "Full" },
+        { "value": "default", "label": "Default" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "flex_align",
+      "label": "Text alignment",
+      "default": "align--middle-left",
+      "options": [
+        { "value": "align--middle-left", "label": "Left" },
+        { "value": "align--middle-center", "label": "Center" },
+        { "value": "align--middle-right", "label": "Right" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "dark",
+      "options": [
+        { "value": "dark", "label": "Dark" },
+        { "value": "white", "label": "White" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "height",
+      "label": "Section height",
+      "default": "screen-height-one-third",
+      "options": [
+        { "value": "screen-height-one-half", "label": "1/2 of screen"},
+        { "value": "screen-height-one-third", "label": "1/3 of screen"},
+        { "value": "five-fifty-height-hero ", "label": "550px" },
+        { "value": "four-fifty-height-hero", "label": "450px" },
+        { "value": "three-fifty-height-hero", "label": "350px" },
+        { "value": "two-fifty-height-hero", "label": "250px" },
+        { "value": "image-height", "label": "Image height" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "image_picker",
+      "id": "bg_image",
+      "label": "Background image"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Opacity",
+      "info": "Increase contrast for legible text.",
+      "unit": "%",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#fff"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Promotional",
+      "name": "Newsletter"
+    }
+  ]
+}
+{% endschema %}

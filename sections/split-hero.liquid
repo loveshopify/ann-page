@@ -1,0 +1,190 @@
+<!-- /sections/split-hero.liquid -->
+
+{% comment %} Colors {% endcomment %}
+{%- unless section.settings.overlay_color == blank -%}
+  {%- assign overlayColor = section.settings.overlay_color  -%}
+{%- else -%}
+  {%- assign overlayColor = 'none' -%}
+{%- endunless -%}
+{%- assign overlayOpacity = section.settings.overlay_opacity | prepend: '.' -%}
+{%- assign transparency_class = '' -%}
+{%- if section.settings.transparent or section.settings.button_image -%}
+  {%- assign transparency_class = 'hero__content--transparent' -%}
+{%- endif -%}
+
+<section>
+  <div class="split-hero {{ section.settings.image_height }} {{ section.settings.text_color }}" data-mobile="{{ section.settings.mobile_layout }}">
+    <div class="split-hero__half split-hero__half--left">
+      {% include 'split-hero-image', img_object: section.settings.image_desktop_left %}
+    </div>
+    <div class="split-hero__half split-hero__half--right">
+      {% include 'split-hero-image', img_object: section.settings.image_desktop_right %}
+    </div>
+    <div class="split-hero__overlay" data-overlay-opacity="{{ overlayOpacity }}" style="background-color: {{ overlayColor }}; opacity: {{ overlayOpacity }};"></div>
+    <div class="hero__content__wrapper {{ section.settings.flex_align }} {{ transparency_class }}">
+      <div class="hero__content" data-aos="fade-up">
+        {% unless section.settings.title == '' %}
+          <h1 class="hero__title"
+            data-aos-duration="500"
+            data-aos="fade-up">
+        {{ section.settings.title | escape }}</h1>{% endunless %}
+        {% unless section.settings.description == '' %}
+          <p class="hero__description h5--body"
+            data-aos="fade-up"
+            data-aos-duration="600"
+            data-aos-delay="100">
+            {{ section.settings.description }}
+          </p>
+        {% endunless %}
+        {% unless section.settings.link_text == '' %}
+          <a class="hero__btn btn btn--large btn--secondary caps"
+            href="{{ section.settings.link }}"
+            data-aos="fade-up"
+            data-aos-duration="700"
+            data-aos-delay="200">
+          {{ section.settings.link_text | escape }}
+          </a>
+        {% endunless %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+  {
+  "name": "Split images",
+  "class": "header--full",
+  "settings": [
+    {
+      "type": "select",
+      "id": "image_height",
+      "label": "Section height",
+      "default": "screen-height-full",
+      "options": [
+        { "value": "screen-height-full", "label": "Full screen height"},
+        { "value": "screen-height-three-quarters", "label": "3/4 of screen"},
+        { "value": "screen-height-two-thirds", "label": "2/3 of screen"},
+        { "value": "screen-height-one-half", "label": "1/2 of screen"},
+        { "value": "seven-fifty-height-hero", "label": "750px" },
+        { "value": "sixty-fifty-height-hero", "label": "650px" },
+        { "value": "five-fifty-height-hero ", "label": "550px" },
+        { "value": "four-fifty-height-hero", "label": "450px" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "label": "Mobile layout",
+      "default": "stacked",
+      "options": [
+        { "label": "Inline", "value": "inline" },
+        { "label": "Stacked", "value": "stacked" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Images"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_desktop_left",
+      "label": "Image left"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_desktop_right",
+      "label": "Image right"
+    },
+    {
+      "type": "header",
+      "content": "Text"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Split images"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Subheading",
+      "default": "Tell your brand's story through images."
+    },
+    {
+      "type": "select",
+      "id": "flex_align",
+      "label": "Block alignment",
+      "default": "align--middle-center",
+      "options": [
+        { "value": "align--top-left", "label": "Top left"},
+        { "value": "align--top-center", "label": "Top center"},
+        { "value": "align--top-right", "label": "Top right"},
+        { "value": "align--middle-left", "label": "Middle left"},
+        { "value": "align--middle-center", "label": "Absolute center"},
+        { "value": "align--middle-right", "label": "Middle right"},
+        { "value": "align--bottom-left", "label": "Bottom left"},
+        { "value": "align--bottom-center", "label": "Bottom center"},
+        { "value": "align--bottom-right", "label": "Bottom right"}
+      ]
+    },
+    {
+      "type": "select",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "text-light",
+      "options": [
+        { "value": "text-light", "label": "White"},
+        { "value": "text-dark", "label": "Dark"}
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "transparent",
+      "label": "Transparent background",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "link_text",
+      "label": "Text",
+      "default": "View products"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Overlay"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Color",
+      "default": "#333"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Opacity",
+      "min": 0,
+      "max": 95,
+      "step": 5,
+      "unit": "%",
+      "default": 30
+    }
+  ],
+  "presets": [
+    {
+      "name": "Split images",
+      "category": "Image"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,186 @@
+<!-- /snippets/custom-product.liquid -->
+
+
+<div class="product__wrapper">
+
+  {%- assign current_variant = product.selected_or_first_available_variant -%}
+  {%- assign featured_image = current_variant.featured_image | default: product.featured_image -%}
+
+  {%- if section.settings.show_breadcrumbs -%}
+    <nav class="breadcrumbs">
+      <small>
+        <a href="{{ shop.url }}">{{ 'general.breadcrumbs.home' | t }}</a><span class="breadcrumbs__arrow">{% include 'icon-arrow-right' %}</span>
+
+        {% if template contains 'product' %}
+          {% assign first_collection = product.collections[0] %}
+          {% if first_collection.handle != blank %}
+            {{ first_collection.title | link_to: first_collection.url }}
+            <span class="breadcrumbs__arrow">{% include 'icon-arrow-right' %}</span>
+          {% endif %}
+
+          <a href="{{ shop.url }}">{{ product.title }}</a>
+        {% endif %}
+
+        {% if template contains 'collection' %}
+          {% if collection %}<a href="{{ collection.url }}">{{ collection.title }}</a><span class="breadcrumbs__arrow">{% include 'icon-arrow-right' %}</span>{% endif %}
+        {% endif %}
+      </small>
+    </nav>
+  {%- endif -%}
+
+  <div class="grid product__page">
+    <div class="grid__item medium-up--one-half">
+      <div class="product__slides product-single__photos" data-product-slideshow>
+        {%- assign featured_image = current_variant.featured_image | default: product.featured_image -%}
+        {%- assign img_api = featured_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+        <div class="lazy-image product__photo" data-thumb="{{ featured_image.src | img_url: '190x190', crop: 'center' }}" data-product-photo-wrapper>
+          <div data-zoom-wrapper class="lazy-image" style="padding-top:{{ 1 | divided_by: featured_image.aspect_ratio | times: 100}}%; background-image:  url('{{ featured_image.src | img_url: '1x1' }}');">
+            <img data-zoom data-src="{{  featured_image.src | img_url: '3000x' }}" style="display: none;" alt="{{ 'products.product.zoom' | t }}">
+            <img data-product-featured-image data-product-image class="fade-in lazyload"
+              data-image-id="{{ featured_image.id }}"
+              alt="{{ featured_image.alt | escape }}"
+              data-src="{{ img_api }}"
+              data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+              data-aspectratio="{{featured_image.aspect_ratio }}"
+              data-sizes="auto"/>
+          </div>
+          {% if featured_image.alt contains 'youtube.com' or featured_image.alt contains 'vimeo.com' %}
+            <a href="{{ featured_image.alt }}" class="productVideo product__play">
+              <span class="icon icon-play">{% include 'icon-play' %}</span>
+              <span class="visually-hidden">&#9658;</span>
+            </a>
+          {% endif %}
+        </div>
+
+        {% for image in product.images %}
+          {% unless image contains featured_image %}
+            {%- assign img_api = image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+            <div class="product__photo{% unless forloop.first == true %} product__photo--additional{% endunless %}"  data-thumb="{{ image.src | img_url: '190x190', crop: 'center' }}">
+              <div data-zoom-wrapper class="lazy-image" style="padding-top:{{ 1 | divided_by: image.aspect_ratio | times: 100}}%; background-image:  url('{{ image.src | img_url: '1x1' }}');">
+                <img data-zoom data-src="{{  image.src | img_url: '3000x' }}" style="display: none;" alt="{{ 'products.product.zoom' | t }}">
+                <img data-product-image class="fade-in lazyload"
+                  data-image-id="{{ image.id }}"
+                  alt="{{ image.alt | escape }}"
+                  data-src="{{ img_api }}"
+                  data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+                  data-aspectratio="{{ image.aspect_ratio }}"
+                  data-sizes="auto"/>
+              </div>
+              {% if image.alt contains 'youtube.com' or image.alt contains 'vimeo.com' %}
+                <a href="{{ image.alt }}" class="productVideo product__play">
+                  <span class="icon icon-play">{% include 'icon-play' %}</span>
+                  <span class="visually-hidden">&#9658;</span>
+                </a>
+              {% endif %}
+            </div>
+          {% endunless %}
+        {% endfor %}
+      </div>
+      <noscript>
+        {% for image in product.images %}
+          <img src="{{ image | img_url: '900x' }}" alt="{{ image.alt | default: product.title  }}">
+        {% endfor %}
+      </noscript>
+      <div data-product-thumbs class="product__thumbs--square"></div>
+    </div>
+
+    <div class="grid__item medium-up--one-half">
+      <div class="form__wrapper{% unless current_variant.available %} variant--soldout{% endunless %}" data-form-wrapper>
+        <div class="form__inner__wrapper">
+          <div class="form__width">
+            <div class="product__title__wrapper">
+              <h1 class="product__title">{{ product.title }}</h1>
+              <div class="h5--body">
+                <span>QTY 30 Flat Cards + White Envelopes</span>
+              </div>
+              <div class="h5--body product__price" data-price-wrapper>
+                <span data-product-price {% if current_variant.compare_at_price > current_variant.price %} class="product__price--sale"{% endif %}>
+                  {{ current_variant.price | money }}
+                </span>
+
+                {% if product.compare_at_price_max > product.price %}
+                  <span class="visually-hidden" data-compare-text>{{ 'products.product.regular_price' | t }}</span>
+                  <s class="product__price--strike" data-compare-price>
+                    {% if current_variant.compare_at_price > current_variant.price %}
+                      {{ current_variant.compare_at_price | money }}
+                    {% endif %}
+                  </s>
+                {% endif %}
+              </div>
+            </div>
+
+            {%- if settings.enable_product_reviews -%}
+              <div class="product__badge">
+                {%- if settings.enable_yotpo and settings.yotpo_ID != '' -%}
+                  <div class="yotpo bottomLine" data-product-id="{{ product.id }}"></div>
+                {%- else -%}
+                  <span class="shopify-product-reviews-badge" data-id="{{ product.id }}"></span>
+                  <a href="#reviews-scroll">{{ 'products.product.reviews_link' | t }}</a>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+
+            <p>
+              *Please enter personalization in the box below.  Can be first and last names.  No character limit.
+              *Fonts and colors will be as shown.
+            </p>
+
+            <div class="product__form">
+              {% include 'product-form', buybutton_setting: section.settings.show_payment_button %}
+            </div>
+
+            {%- assign description_position = '' -%}
+            {%- assign product_description_content = product.description -%}
+            {%- assign has_tabs = false -%}
+            {%- for block in section.blocks -%}
+              {%- if block.type == "tab_description" -%}
+                {%- assign has_tabs = true -%}
+              {%- endif -%}
+            {%- endfor -%}
+            {%-if has_tabs -%}
+              {%- assign product_description_content = product_description_content | split: '<h6>' | first -%}
+            {%- endif -%}
+
+            <div class="product-description rte">
+              {{ product_description_content }}
+            </div>
+
+            {%- if section.blocks.size > 0 and section.settings.tabs_enable -%}
+              <div class="tabs-wrapper productTabsWrapper">
+                {% include 'product-tabs' %}
+              </div>
+            {%- endif -%}
+
+            {% if section.settings.product_show_vendor and product.vendor %}
+              <p class="product__vendor caps">{{ 'products.product.vendor' | t }}: <a href="{{ product.vendor | url_for_vendor }}" class="text-link">{{ product.vendor }}</a></p>
+            {%- endif -%}
+
+            {% if section.settings.show_share_buttons %}
+              <div class="product__sharing">
+                {% include 'social-sharing', share_title: product.title, share_permalink: product.url, share_image: featured_image %}
+              </div>
+            {% endif %}
+
+            {%- if settings.enable_product_reviews -%}
+              {%- if settings.enable_yotpo and settings.yotpo_ID != '' -%}
+                {% include 'yotpo-reviews' %}
+              {%- else -%}
+                <div class="product__reviews" id="reviews-scroll">
+                  <div id="shopify-product-reviews" data-id="{{product.id}}">{{ product.metafields.spr.reviews }}</div>
+                </div>
+              {%- endif -%}
+            {%- endif -%}
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+{% unless product == empty %}
+  <script type="application/json" data-product-json>
+    {{ product | json }}
+  </script>
+{% endunless %}

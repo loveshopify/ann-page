@@ -1,0 +1,394 @@
+<!-- /sections/article.liquid -->
+
+{% assign number_of_comments = article.comments_count %}
+
+{% if comment and comment.created_at %}
+  {% assign number_of_comments = article.comments_count | plus: 1 %}
+{% endif %}
+
+{% comment %}
+  Extract product handles from links in article content
+{% endcomment %}
+{%- assign article_content = article.content | split: '/products/' -%}
+{%- if article_content.size > 0 -%}
+  {%- assign starts_with_handle = '' -%}
+  {%- for item in article_content -%}
+    {% comment %}
+      The first item is empty, subsequent items start with a product handle
+      Split on URL encoded string to handle params
+    {% endcomment %}
+    {%- unless forloop.index0 == 0 -%}
+      {%- assign starts_with_handle = item | url_encode | split: '%'  -%}
+      {%- assign handles = handles | append: starts_with_handle[0] | append: ',' -%}
+    {%- endunless -%}
+  {%- endfor -%}
+{%- endif -%}
+
+{%- assign handles = handles | split: ',' | compact | uniq -%}
+{%- assign related_products = '' %}
+
+{% comment %}
+  Loop through products to ensure that they are valid products
+{% endcomment %}
+{% for handle in handles %}
+  {%- assign product = all_products[handle] -%}
+  {%- if product.id != '' -%}
+    {%- assign related_products = related_products | append: product.handle | append: ',' -%}
+  {%- endif -%}
+{% endfor %}
+
+{%- assign related_products = related_products | split: ',' | compact -%}
+
+{% assign sidebar_enable = false %}
+{% if section.settings.tag_nav_enable %}
+  {% assign sidebar_enable = true %}
+{% elsif section.settings.blog_linklist %}
+  {% assign sidebar_enable = true %}
+{% elsif section.settings.recent %}
+  {% assign sidebar_enable = true %}
+{% elsif section.settings.pinterest %}
+  {% assign sidebar_enable = true %}
+{% elsif related_products.size > 0 %}
+  {% assign sidebar_enable = true %}
+{% endif %}
+
+<section class="article--single" data-section-id="{{ section.id }}" data-section-type="article">
+  {% comment %} Show hero image if pinterest widget is disabled or if pinterest widget is enabled but image is not portrait {% endcomment %}
+
+  {% if article.image and section.settings.pinterest == false or article.image and article.image.aspect_ratio > 0.9 %}
+    {% assign original_height = false %}
+    {% if section.settings.image_height == 'image-height' %}
+      {% assign original_height = true %}
+    {% endif %}
+
+    {% if original_height %}
+        <div class="article__image {{ section.settings.image_height }}">
+          {% assign image = article.image %}
+          {% assign img_url = image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' %}
+          <img class="responsive-wide-image lazyload"
+            src="{{ image | img_url: '1080x' }}"
+            data-src="{{ img_url }}"
+            data-widths="[540, 720, 900, 1080, 1296, 1512, 1728, 1944, 2048]"
+            data-aspectratio="{{ image.aspect_ratio }}"
+            data-sizes="auto"
+            data-parent-fit="cover"
+            alt="{{ article.title | escape }}">
+          <noscript>
+            <img class="no-js-image" src="{{ image | img_url: '1024x' }}" alt="{{ article.title | escape }}">
+          </noscript>
+        </div>
+      {% else %}
+        <div class="article__image lazyload {{ section.settings.image_height }}"
+            data-bgset="{% include 'bgset', image: article.image %}"
+            data-sizes="auto"
+            data-parent-fit="cover">
+        </div>
+        <noscript>
+          <div class="article__image {{ section.settings.image_height }}"
+            style="background-image:url('{{ article.image | img_url: '1024x' }}'); background-size: cover; background-position: center center; background-repeat: no-repeat;"
+          >
+          </div>
+        </noscript>
+      {% endif %}
+  {% endif %}
+  <div class="wrapper article__wrapper">
+    <div class="grid">
+      <div class="grid__item medium-up--eight-twelfths">
+
+        <article class="article">
+
+          <h2 class="article__title">{{ article.title }}</h2>
+
+          {% if section.settings.meta %}
+            <div class="hr"></div>
+            <p class="article__meta">
+              {% assign published_at = article.published_at | date: format: 'full_date' %}
+
+              <span class="article__author">{{ 'blogs.article.by_author' | t: author: article.author }}</span>
+              <time datetime="{{ published_at }}">{{ published_at }}</time>
+            </p>
+            <div class="hr"></div>
+          {% endif %}
+
+          <div class="article__content__wrapper">
+            {% if section.settings.social %}
+              <div class="article__social">
+                {% include 'social-sharing', share_title: article.title, share_permalink: article.url, share_image: article.image %}
+              </div>
+            {% endif %}
+
+            <div class="article__content">
+              {{ article.content }}
+            </div>
+          </div>
+
+          {% if article.user.bio %}
+            <div class="hr"></div>
+            <div class="article__author-bio">
+              {% if article.user.image != blank %}
+                <div class="article__author__image">
+                  <div class="background-size-cover lazyload" data-bgset="{% include 'bgset', image: article.user.image %}"></div>
+                </div>
+              {% endif %}
+
+              <div class="article__author__text">
+                <h3>{{ article.user.first_name }} {{ article.user.last_name }}</h3>
+                <p>{{ article.user.bio | newline_to_br }}</p>
+              </div>
+            </div>
+          {% endif %}
+
+          {% if section.settings.tags %}
+            <h4 class="article__tags">
+              {% for tag in article.tags %}
+                {% if forloop.index0 == 0 %}
+                  <span class="label">{{ 'blogs.article.tags' | t }}: </span>
+                {% endif %}
+                <a href="{{ shop.url }}/blogs/{{ blog.handle }}/tagged/{{ tag | handleize }}" title="{{ blog.title }} tagged {{ tag | escape }}">{{ tag }}</a>{% unless forloop.last %},{% endunless %}
+              {% endfor %}
+            </h4>
+          {% endif %}
+
+
+          {% if section.settings.arrows %}
+            {% if blog.next_article or blog.previous_article %}
+              <div class="hr"></div>
+              <aside class="clearfix">
+                  {% if blog.next_article %}
+                  <small class="right">
+                      {% for post in blog.articles %}
+                        {% if post.url == blog.next_article %}
+                          <a href="{{ post.url }}" title="{{ post.title | escape }}">{{'blogs.article.newer_post' | t}} &rarr;</a>
+                        {% endif %}
+                      {% endfor %}
+                    </small>
+                  {% endif %}
+
+                  {% if blog.previous_article %}
+                  <small class="left">
+                      {% for post in blog.articles %}
+                        {% if post.url == blog.previous_article %}
+                          <a href="{{ post.url }}" title="{{ post.title | escape }}">&larr; {{'blogs.article.older_post' | t}}</a>
+                        {% endif %}
+                      {% endfor %}
+                  </small>
+                  {% endif %}
+              </aside>
+            {% endif %}
+          {% endif %}
+
+        </article>
+      </div>
+      <!-- end article -->
+
+      {% if sidebar_enable %}
+        <div class="grid__item medium-up--four-twelfths sidebar__wrapper">
+          <aside class="sidebar">
+            <div class="sidebar__contents">
+
+              {% if section.settings.blog_linklist != blank %}
+                <div class="widget widget--categories">
+                  <h3 class="widget__title">{{ 'blogs.sidebar.categories' | t }}</h3>
+                  <ul class="widget__links">
+                    {% for link in linklists[section.settings.blog_linklist].links %}
+                      {% assign current_blog = link.object %}
+                      <li {% if current_blog.articles.size > 0 %} aria-haspopup="true" class="has-sub-nav"{% endif %}>
+                        <a href="{{ link.url }}" title="{{ link.title }}" {% if current_blog.articles.size > 0 %}aria-controls="submenu"{% endif %}>{{ link.title }}</a>
+                        {% if current_blog.articles.size > 0 %}
+                        <ul class="submenu" aria-expanded="false">
+                          {% for article in current_blog.articles limit: 5 %}
+                            <li><a href="{{ article.url }}" title="{{ article.title }}">{{ article.title }}</a></li>
+                          {% endfor %}
+
+                          {% comment %}
+                            If blog posts are more than 5 then show 'See more...' link
+                          {% endcomment %}
+                          {% if current_blog.articles.size > 5 %}
+                            <li><a href="{{ link.url }}" title="{{ link.title }}">{{ 'blogs.sidebar.see_more' | t }}</a></li>
+                          {% endif %}
+                        </ul>
+                        {% endif %}
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              {% elsif section.settings.tag_nav_enable %}
+                <div class="widget widget--categories">
+                  <h3 class="widget__title">{{ 'blogs.sidebar.categories' | t }}</h3>
+                  <ul class="widget__links">
+                    {% for tag in blog.all_tags %}
+                      <li {% if article.tags contains tag %}class="widget__links--active" {% endif %}>
+                        <a class="widget__links__link" href="/blogs/{{ blog.handle }}/tagged/{{ tag | handleize }}">{{ tag }}</a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              {% endif %}
+
+              {% if section.settings.sidebar_products and related_products.size > 0 %}
+                <h3 class="widget__title">{{ 'blogs.article.related_products' | t }}</h3>
+                <div class="widget__products">
+                  {% for handle in related_products %}
+                    {%- assign product = all_products[handle] -%}
+                    {% include 'product-column-item' %}
+                  {% endfor %}
+                </div>
+              {% endif %}
+
+              {% if section.settings.recent %}
+                <h3 class="widget__title">{{ 'blogs.article.read_more' | t }}</h3>
+                {% assign counter = 0 %}
+                {% assign article_limit = 3 %}
+                {% assign current_article = article %}
+                {% assign blog_grid = 'one-whole' %}
+                <div class="widget__recent">
+                  {% for article in blog.articles %}
+                    {% unless article.handle == current_article.handle %}
+                      {% include 'article-column-item' %}
+                      {% assign counter = counter | plus: 1 %}
+                      {% if counter == article_limit %}
+                        {% break %}
+                      {% endif %}
+                    {% endunless %}
+                  {% endfor %}
+                </div>
+              {% endif %}
+
+              {% if article.image and section.settings.pinterest and article.image.aspect_ratio < 0.9 %}
+                <div class="widget widget--pinterest">
+                  <h3 class="widget__title">{{ 'blogs.sidebar.pinterest' | t }}</h3>
+                  <div class="widget__image">
+                    {% assign image = article.image %}
+                    {% assign img_url = image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' %}
+                    <img class="lazyload pinterest__image"
+                      data-src="{{ img_url }}"
+                      data-widths="[540, 720, 900, 1080, 1296, 1512, 1728, 1944, 2048]"
+                      data-aspectratio="{{ article.image.aspect_ratio }}"
+                      data-sizes="auto"
+                      data-parent-fit="contain"
+                      alt="{{article.title | escape}}">
+                    <noscript>
+                      <img class="no-js-image" src="{{ article.image | img_url: '320x' }}" alt="{{article.title | escape}}">
+                    </noscript>
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+          </aside>
+        </div>
+        <!-- end sidebar -->
+      {% endif %}
+
+      {% if settings.enable_disqus or blog.comments_enabled? %}
+        <div class="grid__item medium-up--eight-twelfths">
+          <div class="comments-container">
+            {% if settings.enable_disqus %}
+              <div id="disqus_thread"></div>
+            {% elsif blog.comments_enabled? %}
+              {% include 'article-comments' %}
+            {% endif %}
+          </div>
+        </div>
+        <!-- end comments -->
+      {% endif %}
+
+    </div>
+  </div>
+</section>
+
+{% schema %}
+  {
+      "name": "Article page",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Hero"
+        },
+        {
+          "type": "select",
+          "id": "image_height",
+          "label": "Image height",
+          "default": "screen-height-one-third",
+          "options": [
+            { "value": "screen-height-full", "label": "Full screen height"},
+            { "value": "screen-height-three-quarters", "label": "3/4 of screen"},
+            { "value": "screen-height-two-thirds", "label": "2/3 of screen"},
+            { "value": "screen-height-one-half", "label": "1/2 of screen"},
+            { "value": "screen-height-one-third", "label": "1/3 of screen"},
+            { "value": "seven-fifty-height-hero", "label": "750px" },
+            { "value": "sixty-fifty-height-hero", "label": "650px" },
+            { "value": "five-fifty-height-hero ", "label": "550px" },
+            { "value": "four-fifty-height-hero", "label": "450px" },
+            { "value": "image-height", "label": "Image height" }
+          ]
+        },
+        {
+          "type": "header",
+          "content": "Article"
+        },
+        {
+          "type": "checkbox",
+          "id": "meta",
+          "label": "Show date and author",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "tags",
+          "label": "Show article tags",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "social",
+          "label": "Show social sharing buttons",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "arrows",
+          "label": "Show navigation arrows",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "Sidebar"
+        },
+        {
+          "type": "checkbox",
+          "id": "tag_nav_enable",
+          "label": "Enable tag navigation"
+        },
+        {
+          "type": "link_list",
+          "id": "blog_linklist",
+          "label": "Custom navigation",
+          "info": "Overrides tag navigation"
+        },
+        {
+          "type": "checkbox",
+          "id": "recent",
+          "default": true,
+          "label": "Show recent articles"
+        },
+        {
+          "type": "checkbox",
+          "id": "sidebar_products",
+          "default": true,
+          "label": "Show products",
+          "info": "Products linked from the article will show in the sidebar."
+        },
+        {
+          "type": "header",
+          "content": "Pinterest"
+        },
+        {
+          "type": "checkbox",
+          "id": "pinterest",
+          "label": "Show Pinterest widget",
+          "default": false,
+          "info": "Photos with a 'portrait' aspect ratio will appear in the sidebar instead of in the banner."
+        }
+      ]
+  }
+{% endschema %}

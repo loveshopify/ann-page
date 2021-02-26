@@ -1,0 +1,135 @@
+<!-- /sections/index-icons-row.liquid -->
+
+{%- assign heading = section.settings.title -%}
+{% assign logo_opacity = section.settings.logo_opacity | times: 0.01 %}
+<style>
+  .logo-list--{{ section.id }} .logo-list__item { opacity: {{ logo_opacity }}; }
+</style>
+
+<div class="logo-list logo-list--{{ section.id }}" data-section-id="{{ section.id }}" data-section-type="logo-list" style="background-color: {{ section.settings.bg_color }};">
+  <div class="container">
+    <div class="logo-list__wrapper">
+
+      {%- if heading -%}
+        <h2>{{ heading }}</h2>
+      {%- endif -%}
+
+      <div class="logo-list__slider-text js-logo-list__slider-text" id="logo-list__slider-text--{{ section.id }}">
+        {%- for block in section.blocks -%}
+          {%- assign text = block.settings.text -%}
+
+          <div class="logo-list__slide logo-list__slide--{{ block.id }}" data-block="item_logo" {{ block.shopify_attributes }}>
+            {%- if text -%}
+              <p>{{ text }}</p>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+
+      <div class="logo-list__slider js-logo-list__slider" id="logo-list__slider--{{ section.id }}">
+        {%- for block in section.blocks -%}
+          {%- assign logo = block.settings.logo -%}
+
+          <div class="logo-list__slide logo-list__slide--{{ block.id }} {% if forloop.index == 1 %}is-active{% endif %}" data-slick-index="{{ forloop.index | minus: 1 }}" data-block="item_logo" {{ block.shopify_attributes }}>
+            {%- if logo != blank -%}
+              <div
+                class="logo-list__item lazyload fade-in"
+                data-bgset="{%- include 'bgset', image: logo -%}"
+                data-sizes="auto"
+                data-parent-fit="cover"
+                data-aspectratio="{{ logo.aspect_ratio }}"></div>
+
+              <noscript>
+                <div class="logo-list__item no-js-image" style="background-image: url( {{ logo | img_url: '180x' }} );"></div>
+              </noscript>
+            {%- else -%}
+              <div class="logo-list__item svg-placeholder">
+                {{ 'logo' | placeholder_svg_tag: 'placeholder-svg' }}
+              </div>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+
+      <div class="slideshow__arrow slideshow__arrow--prev" data-prev-arrow>{% include 'icon-arrow-left' %}</div>
+      <div class="slideshow__arrow slideshow__arrow--next" data-next-arrow>{% include 'icon-arrow-right' %}</div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Logo list",
+  "max_blocks": 25,
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Logo list"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background",
+      "default": "#fafafa"
+    },
+    {
+      "type": "range",
+      "id": "logo_opacity",
+      "label": "Logo opacity",
+      "info": "Inactive logo opacity",
+      "unit": "%",
+      "min": 5,
+      "max": 100,
+      "step": 5,
+      "default":50
+    }
+  ],
+  "blocks": [
+    {
+      "type": "logo-item",
+      "name": "Logo item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "logo",
+          "label": "Logo"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Include a brief quote or a description of your relationship with the brand."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Logo list",
+      "category": "Image",
+      "blocks": [
+        {
+          "type": "logo-item"
+        },
+        {
+          "type": "logo-item"
+        },
+        {
+          "type": "logo-item"
+        },
+        {
+          "type": "logo-item"
+        },
+        {
+          "type": "logo-item"
+        },
+        {
+          "type": "logo-item"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

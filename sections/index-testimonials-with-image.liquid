@@ -1,0 +1,216 @@
+<!-- /sections/testimonials.liquid -->
+
+{% assign button_text_color = section.settings.button_text_color | default: '#726D75' %}
+{% assign button_bg_color = section.settings.button_bg_color %}
+{% assign has_block_images = false %}
+{% for block in section.blocks %}
+  {% if block.settings.image != blank %}
+    {% assign has_block_images = true %}
+  {% endif %}
+{% endfor %}
+
+<div class="testimonials testimonials-with-image" data-section-id="{{ section.id }}" data-section-type="testimonials" style="background-color: {{section.settings.testimonials_bg}};">
+    <div class="testimonials__slider testimonials__slider--{{ section.id }}" data-slick='{"slidesToShow": 1}'>
+      {% if section.blocks.size > 0 %}
+        {% for block in section.blocks %}
+          {% assign customer_name = block.settings.title %}
+          {% assign testimonial = block.settings.testimonial %}
+          {% assign bio_image = block.settings.bio_image %}
+          {% assign username = block.settings.username %}
+          {% assign tweet_url = block.settings.tweet_url %}
+
+          {% assign button_text = block.settings.button_text %}
+          {% assign button_link = block.settings.button_link %}
+
+          {% assign block_img = block.settings.image %}
+          {% assign product = all_products[block.settings.product] %}
+          {% assign product_img = product.featured_image %}
+
+          {% assign img_object = product_img %}
+
+          {% if block_img != blank %}
+             {% assign img_object = block_img %}
+          {% endif %}
+
+          <div class="testimonial__slide testimonial__slide--{{ block.id }}" {{ block.shopify_attributes }}>
+            <div class="testimonial {% if img_object == blank %}testimonial--no-image{% endif %}">
+              {% unless img_object == blank %}
+                <div class="testimonial__image">
+                  <div class="testimonial__image-bg lazyload" data-bgset="{% include 'bgset', image: img_object %}"></div>
+                  <noscript>
+                    <div class="testimonial__image-bg no-js-image" style="background-image: url( {{ img_object | img_url: '1024x' }} )" data-bgset="{% include 'bgset', image: img_object %}"></div>{{ img_object | img_url: '2048x' }}
+                  </noscript>
+
+                  {% if button_text == blank and product != blank %}
+                    <a href="{{ product.url }}" class="testimonial__button" style="color: {{ button_text_color }}; background: {{ button_bg_color }};">{{ product.title }}</a>
+                  {% elsif button_text != blank %}
+                    <a href="{{ button_link }}" class="testimonial__button" style="color: {{ button_text_color }}; background: {{ button_bg_color }};">{{ button_text }}</a>
+                  {% endif %}
+                </div>
+              {% endunless %}
+
+              <div class="testimonial__content">
+                {% if testimonial != blank %}
+                  <blockquote>
+                    <span class="tesimonial__quotes oi" data-glyph="double-quote-sans-left"></span>
+                    <p>{{ testimonial }}</p>
+                  </blockquote>
+                {% endif %}
+
+                {% if customer_name != blank or tweet_url != blank or bio_image != blank %}
+                  <div class="testimonial__author {% if bio_image == blank %}testimonial__author--no-bio-image{% endif %}">
+                    {% if bio_image != blank %}
+                      <div class="testimonial__author-bio-image lazyload" data-bgset="{% include 'bgset', image: bio_image %}"></div>
+                      <noscript>
+                        <div class="testimonial__author-bio-image no-js-image" style="background-image: url( {{ bio_image | img_url: '1024x' }} )" data-bgset="{% include 'bgset', image: bio_image %}"></div>{{ bio_image | img_url: '2048x' }}
+                      </noscript>
+                    {% endif %}
+                    {% if customer_name != blank %}
+                      <strong>{{ customer_name }}</strong>
+                    {% endif %}
+                    {% if username != blank %}
+                      <span class="username">{{ username }}</span>
+                    {% endif %}
+                  </div>
+                {% endif %}
+
+                {% if tweet_url != blank %}
+                  <div class="testimonial__tweet-url">
+                    <a href="{{ tweet_url }}" target="_blank">{{ 'home_page.sections.testimonials_twitter_link' | t }}</a>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+</div>
+
+{% schema %}
+{
+  "name": "Testimonials with image",
+  "settings": [
+    {
+      "type": "color",
+      "id": "testimonials_bg",
+      "label": "Background color",
+      "default": "#fafafa"
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Text color",
+      "default": "#726D75"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Background color",
+      "default": "#E7E7E7"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "header",
+          "content":"Testimonial"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Customer name",
+          "default": "Example Customer"
+        },
+        {
+          "type": "textarea",
+          "id": "testimonial",
+          "label": "Testimonial",
+          "default": "Use this text to showcase a review from one of your customers.  A great review is honest and speaks to the concerns of your customers."
+        },
+        {
+          "type": "image_picker",
+          "id": "bio_image",
+          "label": "Bio image"
+        },
+        {
+          "type": "header",
+          "content": "Twitter",
+          "info": "Optional"
+        },
+        {
+          "type": "text",
+          "id": "username",
+          "label": "Username",
+          "default":"@username"
+        },
+        {
+          "type": "text",
+          "id": "tweet_url",
+          "label": "Link to Tweet",
+          "default": "https://twitter.com/"
+        },
+        {
+          "type": "header",
+          "content":"Reviewed Item",
+          "info": "Optional"
+        },
+        {
+         "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "Override the default product image with an image from your customer."
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Text",
+          "info": "Override the product name."
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Link",
+          "info": "Override the product link with a collection or article link."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonials with image",
+      "category": "Text",
+      "blocks": [
+        {
+          "type": "testimonial",
+          "settings": {
+            "testimonial": "Use this text to showcase a review from one of your customers.  A great review is honest and speaks to the concerns of your customers.",
+            "title":"Mark Corrigan",
+            "tweet_url":"https://twitter.com/jack/status/20"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "testimonial": "Use this text to showcase a review from one of your customers.  A great review is honest and speaks to the concerns of your customers.",
+            "title":"Jeremy Usborne",
+            "tweet_url":"https://twitter.com/jack/status/20"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,82 @@
+<!-- /templates/page.fullwidth.liquid -->
+
+<section class="page">
+  <h2 class="theme">{{ page.title }}</h2>
+  <div class="descr">
+    {{ page.content }}
+  </div>
+  <div class="wr-images">
+    <div class="img-item">
+      <img class="img1" src="{{ 'img4.png' | asset_url }}" alt/> 
+    </div>
+    <div class="img-item">
+      <img class="img2" src="{{ 'img5.png' | asset_url }}" alt/> 
+    </div>
+    <div class="img-item">
+      <img class="img3" src="{{ 'img6.png' | asset_url }}" alt/> 
+    </div>
+    <div class="img-item">
+      <img class="img4" src="{{ 'img1.png' | asset_url }}" alt/> 
+    </div>
+    <div class="img-item">
+      <img class="img5" src="{{ 'img2.png' | asset_url }}" alt/> 
+    </div>
+    <div class="img-item">
+      <img class="img6" src="{{ 'img3.JPG' | asset_url }}" alt/> 
+    </div>
+
+  </div>
+</section>
+
+
+<style>
+  .descr p,
+  .descr div{
+    text-align: left !important;
+  }
+  .descr {
+    text-align: left !important;
+  }
+  .wr-images{
+    display: inline-block;
+    width: calc(100% + 8px);
+    margin-top: 40px;
+    margin-left: -8px;
+  }
+  .wr-images .img-item{
+    display: inline-block;
+    width: 33.33%;
+    float: left;
+    margin-bottom: 16px;
+    padding: 0 8px;
+  }
+  .wr-images .img-item img{
+    display:block;
+  }
+
+  @media only screen and (max-width: 991px) {
+  }
+  @media only screen and (max-width: 767px) {
+  }
+  @media only screen and (max-width: 639px) {
+    .wr-images .img-item {
+      width: 50%;
+    }
+  }
+  @media only screen and (max-width: 479px) {
+  }
+  @media only screen and (max-width: 369px) {
+    .wr-images .img-item {
+      display: inline-block;
+      width: 50%;
+      margin-bottom: 10px;
+      padding: 0 5px;
+    }
+    .wr-images {
+    display: inline-block;
+    width: 100%;
+    margin-top: 40px;
+    margin-left: 0;
+}
+  }
+</style>

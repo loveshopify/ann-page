@@ -1,0 +1,316 @@
+<!-- /sections/blog-template.liquid -->
+
+{% case section.settings.grid %}
+  {% when 1 %}
+    {% assign grid_width_large = 'large-up--one-half large-up--push-one-quarter clear' %}
+    {% assign grid_width_medium = 'medium--one-half medium--push-one-quarter clear' %}
+    {% assign grid_width_small = 'small--one-whole' %}
+  {% when 2 %}
+    {% assign grid_width_large = 'large-up--one-half' %}
+    {% assign grid_width_medium = 'medium--one-half' %}
+    {% assign grid_width_small = 'small--one-whole' %}
+  {% when 3 %}
+    {% assign grid_width_large = 'large-up--one-third' %}
+    {% assign grid_width_medium = 'medium--one-third' %}
+    {% assign grid_width_small = 'small--one-whole' %}
+  {% else %}
+    {% assign grid_width_large = 'large-up--one-fourth' %}
+    {% assign grid_width_medium = 'medium--one-fourth' %}
+    {% assign grid_width_small = 'small--one-whole' %}
+{% endcase %}
+
+{%- assign article_limit = section.settings.grid | times: section.settings.rows -%}
+
+{% assign posts_per_page = section.settings.posts_per_page %}
+{% assign showRSS = section.settings.show_rss %}
+{% assign showAuthor = section.settings.show_author %}
+{% assign showDate = section.settings.show_date %}
+{% assign showButton = section.settings.show_button %}
+{% assign showTags = section.settings.show_tags %}
+{% assign showComments = section.settings.show_comments %}
+
+<section class="blog-page" data-section-id="{{ section.id }}" data-section-type="blog-template">
+
+  {% if section.blocks.size > 0 %}
+    <div class="blog-editorial" style="background-color: {{section.settings.section_bg}};">
+      <div class="editorial__slider editorial__slider--{{ section.id }}">
+        {% for block in section.blocks %}
+          {%- assign article = articles[block.settings.featured_post] -%}
+          <div class="editorial__slide editorial__slide--{{ block.id }}" {{ block.shopify_attributes }}>
+            <div class="editorial">
+              <div class="editorial__content">
+                <p class="editorial__subheading caps">{{ block.settings.subheading }}</p>
+                <h2 class="editorial__title"><a href="{{ article.url }}" title="{{ article.title | escape }}">{{ article.title | default: blog.title }}</a></h2>
+                {% if showDate or showAuthor %}
+                  <h3 class="editorial__meta">
+                    {% if showDate %}
+                      {% assign published_at = article.published_at | default: 'now' | date: format: 'full_date' %}
+                      <time datetime="{{ published_at }}">{{ published_at }} &nbsp; </time>
+                    {% endif %}
+                    {% if showAuthor %}
+                      {% assign article_author = article.author | default: 'Jane Doe' %}
+                      <span>{{ 'blogs.article.by_author' | t: author: article_author }} </span>
+                    {% endif %}
+                  </h3>
+                {% endif %}
+                <div class="editorial__excerpt">
+                  <p>{{ article.excerpt_or_content | strip_html | truncatewords: 30 }}</p>
+                </div>
+                {% if showButton %}
+                  <p class="article__link"><a href="{{ article.url }}">{{ 'blogs.article.read_more' | t }} &rarr;</a></p>
+                {% endif %}
+
+              </div>
+              {%- if article != blank and article.image -%}
+                {%- assign img_object = article.image -%}
+                {%- assign img_small = article.image | img_url: '18x' -%}
+                {%- assign img_api = article.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+              {%- else -%}
+                {%- assign img_object = 'blank.svg' | asset_url -%}
+                {%- assign img_small =  'blank.svg' | asset_url -%}
+                {%- assign img_api = 'blank.svg' | asset_url -%}
+              {%- endif -%}
+              {%- if block.settings.image -%}
+                {%- assign img_object = block.settings.image -%}
+                {%- assign img_small = block.settings.image | img_url: '18x' -%}
+                {%- assign img_api = block.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+              {%- endif -%}
+              <div class="editorial__image">
+                <div class="editorial__image-bg lazyload" data-bgset="{% include 'bgset', image: img_object %}"></div>
+                <noscript>
+                  <div class="editorial__image-bg no-js-image" style="background-image: url( {{ img_object | img_url: '1024x' }} )"></div>
+                </noscript>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="wrapper--full">
+    <h1 class="blog-title">{{ blog.title }}
+      {% if showRSS %}
+        <a class="icon-rss" href="{{blog.title}}.atom" target="_blank"><i class="oi" data-glyph="rss"></i></a>
+      {% endif %}
+    </h1>
+
+    {% if current_tags and section.settings.show_tag_nav == false %}
+      <h5 class="blog-nav">
+        <a href="{{ blog.url}}" title="{{ 'blogs.article.all' | t }}" class="btn--pill">
+          {{ current_tags.first }}
+          <span class="oi" data-glyph="x"></span>
+        </a>
+      </h5>
+    {% endif %}
+
+    {%- if section.settings.show_tag_nav -%}
+      <ul class="inline-nav capitalize">
+        <li {% if current_tags == blank %} class="inline-nav--active"{% endif %}>
+          <a href="/blogs/{{ blog.handle }}/">{{ 'blogs.article.all' | t }}</a>
+        </li>
+        {% for tag in blog.all_tags %}
+          <li {% if current_tags contains tag %}class="inline-nav--active"{% endif %}>
+            {{ tag | link_to_tag: tag }}
+          </li>
+        {% endfor %}
+      </ul>
+    {%- endif -%}
+
+    {% paginate blog.articles by article_limit %}
+      <div class="blog-listing grid grid--uniform" id="BlogLoop">
+        {% for article in blog.articles %}
+          <article class="article article-grid-item grid__item {{ grid_width_small }} {{ grid_width_medium }} {{ grid_width_large }}">
+            {% if article.image %}
+              <a href="{{ article.url }}">
+                {% assign image = article.image %}
+                {% assign img_url = image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' %}
+                <div class="lazy-image article__image" style="padding-top:{{ 1 | divided_by: image.aspect_ratio | times: 100}}%; background-image:  url('{{ image.src | img_url: '1x1' }}');">
+                  <img class="lazyload fade-in"
+                  src="{{ image | img_url: '540x' }}"
+                  data-src="{{ img_url }}"
+                  data-widths="[540, 720, 900, 1080, 1296, 1512, 1728, 1944, 2048]"
+                  data-aspectratio="{{ image.aspect_ratio }}"
+                  data-sizes="auto"
+                  alt="{{ image.alt | default: article.title }}">
+                    <noscript>
+                      <img class="article__image" src="{{ image | img_url: '540x' }}" alt="{{ image.alt | default: article.title }}"/>
+                    </noscript>
+                </div>
+              </a>
+            {% endif %}
+            <h2 class="article__title"><a href="{{ article.url }}" title="{{ article.title | escape }}">{{ article.title }}</a></h2>
+
+            {% if showDate or showAuthor or showComments %}
+              <h3 class="article__meta">
+                {% if showDate %}
+                  {% assign published_at = article.published_at | date: format: 'full_date' %}
+                  <time datetime="{{ published_at }}">{{ published_at }}</time>
+                {% endif %}
+
+
+                {% if showAuthor %}
+                  <span>{{ 'blogs.article.by_author' | t: author: article.author }} </span>
+                {% endif %}
+
+                {% if showComments %}
+                  {% if settings.enable_disqus %}
+                    <span class="comment-count"><em>
+                      <a href="{{ shop.url }}{{ article.url }}" data-disqus-identifier="{{ article.id }}"> </a>
+                    </em></span>
+                  {% elsif article.comments_count > 0 %}
+                    <span class="comment-count"><em>{{ 'blogs.comments.comments_with_count' | t: count: article.comments_count }}</em></span>
+                  {% endif %}
+                {% endif %}
+              </h3>
+            {% endif %}
+
+            <p class="article__excerpt">{{ article.excerpt_or_content | strip_html  | truncatewords: 30 }}</p>
+
+            {% if showButton %}
+              <p class="article__link"><a href="{{ article.url }}">{{ 'blogs.article.read_more' | t }} &rarr;</a></p>
+            {% endif %}
+
+            {% if article.tags.size > 0 and showTags %}
+              <div class="article__footer">
+                <h6 class="article__tags">
+                  {% for tag in article.tags %}
+                    {% if forloop.index0 == 0 %}
+                      <span class="label">{{ 'blogs.article.tags' | t }}: </span>
+                    {% endif %}
+                    <a href="{{ shop.url }}/blogs/{{ blog.handle }}/tagged/{{ tag | handleize }}" title="{{ blog.title }} tagged {{ tag | escape }}">{{ tag }}</a>{% unless forloop.last %},{% endunless %}
+                  {% endfor %}
+                </h6>
+              </div>
+            {% endif %}
+
+          </article>
+        {% endfor %}
+      </div>
+
+      {%- if settings.endless_scroll -%}
+        <div class="pagination" id="BlogPagination">
+          {%- if paginate.next -%}
+            <a href="{{ paginate.next.url }}" class="loadMore js-loadMore">
+              <div class="loader">
+                <div class="loader-indeterminate"></div>
+              </div>
+            </a>
+          {%- endif -%}
+        </div>
+      {%- else -%}
+        {%- include 'pagination' -%}
+      {%- endif -%}
+
+    {% endpaginate %}
+
+
+    {% if blog.articles_count == 0 %}
+      <div class="collection-error centered">
+        <div class="no-products h4 text-center">{{ 'blogs.article.no_articles' | t }}</div>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+  {
+    "name": "Blog pages",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Layout"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_tag_nav",
+        "label": "Show tag navigation",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "show_rss",
+        "label": "Show RSS icon",
+        "default": false
+      },
+      {
+        "type":    "range",
+        "id":      "grid",
+        "min":     1,
+        "max":     3,
+        "step":    1,
+        "label":   "Articles per row",
+        "default": 3
+      },
+      {
+        "type":    "range",
+        "id":      "rows",
+        "min":     1,
+        "max":     5,
+        "step":    1,
+        "label":   "Rows per page",
+        "default": 4
+      },
+      {
+        "type": "header",
+        "content": "Articles"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_author",
+        "label": "Show author",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "show_date",
+        "label": "Show date",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "show_button",
+        "label": "Show 'Read more' button",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_comments",
+        "label": "Show comment count",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "show_tags",
+        "label": "Show tags",
+        "default": false
+      }
+    ],
+    "blocks": [
+      {
+        "type": "featured_post",
+        "name": "Featured post",
+        "settings": [
+          {
+            "type": "article",
+            "id": "featured_post",
+            "label": "Featured post",
+            "info": "Feature a popular post at the top of the blog"
+          },
+          {
+            "type": "text",
+            "id": "subheading",
+            "label": "Subheading",
+            "default": "Featured post"
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image",
+            "info": "Optional: replace the article featured image."
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

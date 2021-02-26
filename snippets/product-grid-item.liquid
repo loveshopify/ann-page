@@ -1,0 +1,166 @@
+
+{%- assign item_type = '' -%}
+{%- if product.object_type == 'product' -%}
+{%- elsif product.object_type == 'article' -%}
+{%- assign item_type = 'layout.search_page.singular_article' | t -%}
+{%- elsif product.object_type == 'page' -%}
+{%- assign item_type = 'layout.search_page.singular_page' | t -%}
+{%- else -%}
+{%- assign item_type = '' -%}
+{%- endif -%}
+
+{%- assign img_tag = '<' | append: 'img' -%}
+
+{%- assign img_src = product.image -%}
+{%- assign img_alt = product.title | escape -%}
+
+{%- if product.object_type == 'product' -%}
+{%- if product.image -%}
+{%- assign img_src = product.image -%}
+{%- else -%}
+{%- assign img_src = product.featured_image -%}
+{%- endif -%}
+{%- elsif product.object_type == 'article'-%}
+{%- assign article = product -%}
+{%- if article.image -%}
+{%- assign img_src = article.image -%}
+{%- elsif article.content contains img_tag -%}
+{%- assign src = article.content | split: 'src="' -%}
+{%- assign src = src[1] | split: '"' | first | remove: 'https:' | remove: 'http:' -%}
+{%- assign img_src = src -%}
+{%- else -%}
+{%- assign img_src = 'blank.svg' | asset_url -%}
+{%- assign img_alt = "No Image" -%}
+{%- endif -%}
+{%- elsif product.content contains img_tag -%}
+{%- assign src = product.content | split: 'src="' -%}
+{%- assign src = src[1] | split: '"' | first | remove: 'https:' | remove: 'http:' -%}
+{%- assign img_src = src -%}
+{%- else -%}
+{%- assign img_src = 'blank.svg' | asset_url -%}
+{%- assign img_alt = "No Image" -%}
+{%- endif -%}
+
+{%- assign double_img = false -%}
+{%- if product.images[1].src and settings.image_hover_enable -%}
+{%- assign double_img = true -%}
+{%- endif -%}
+
+{%- if last_element -%}
+{%- assign lastElementClass = 'visually-hidden' -%}
+{%- endif -%}
+
+{% if fallback %}
+<div class="product-item {{ grid_width_small }} {{ grid_width_medium }} {{ grid_width_large }} {{ lastElementClass }}">
+  <div class="product-item__image svg-placeholder">
+    {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+    {{ 'collection-' | append: current | placeholder_svg_tag }}
+  </div>
+  <div class="product-information">
+    {% if showReviews %}
+    <span class="spr-badge" data-rating="0.0">
+      <span class="spr-starrating spr-badge-starrating">
+        <i class="spr-icon spr-icon-star-empty"></i>
+        <i class="spr-icon spr-icon-star-empty"></i>
+        <i class="spr-icon spr-icon-star-empty"></i>
+        <i class="spr-icon spr-icon-star-empty"></i>
+        <i class="spr-icon spr-icon-star-empty"></i>
+      </span>
+    </span>
+    {% endif %}
+    <h3 class="title">{{ 'home_page.onboarding.product_title' | t }}</h3>
+    <span class="price">{{ 9900 | money }}</span>
+  </div>
+</div>
+{% else %}
+<div class="product-item {{ grid_width_small }} {{ grid_width_medium }} {{ grid_width_large }} {{ lastElementClass }}">
+  <div class="wrapp-pro">
+    <a id="product-{{ product.variants.first.id }}" class="product-link" href="{{ product.url | within: collection }}" aria-label='{{ product.title }}'>
+
+      {% capture over_image_content %}
+      {% if product.compare_at_price > product.price and settings.sale_tags_enable %}
+      <span class="sale-box">{{ 'products.product.on_sale' | t }}</span>
+      {% endif %}
+      {% if quick_view and product.object_type == 'product' %}
+      <div class="slideup">
+        {%- assign uniqueID = section.id -%}
+        {%- if template.name == 'list-collections' -%}
+        {%- assign uniqueID = collection.id -%}
+        {%- endif -%}
+        <span data-modal="Product{{ forloop.index0 }}{{ paginate.current_page }}-{{uniqueID}}" class="trigger-quick-view caps">{{ 'products.general.quick_view' | t }}</span>
+      </div>
+      {% endif %}
+      {% endcapture %}
+
+      <div class="product-item__image {% if double_img %} double__image{% endif %}">
+        <div class="product-item__bg lazyload"
+             data-aos="img-in"
+             data-aos-anchor=".product-grid"
+             data-aos-delay="{{ animation_delay | times: 150 }}"
+             data-aos-duration="{{ animation_delay | times: 100 | plus: 800 }}"
+             data-aos-easing="ease-out-quart"
+             data-bgset="{% include 'bgset', image: img_src %}"></div>
+        {% if double_img %}
+        <div class="product-item__bg__under lazyload" data-bgset="{% include 'bgset', image: product.images[1] %}"></div>
+        {% endif %}
+        {{ over_image_content }}
+      </div>
+
+      <noscript>
+        <div class="product-item__image no-js-image" style="background-image:url('{{ img_src | img_url: '540x' }}'); background-size: contain; background-position: center center; background-repeat: no-repeat;"
+             >
+          {{ over_image_content }}
+        </div>
+      </noscript>
+    </a>
+    {% if settings.addtocart_enable and product.object_type == 'product' %}
+    <div class="slideup">
+      {%- assign uniqueID = section.id -%}
+      {%- if template.name == 'list-collections' -%}
+      {%- assign uniqueID = collection.id -%}
+      {%- endif -%}
+      <span onclick="addItemToCart({{ product.variants[0].id}}, 1)" data-modal="Product{{ forloop.index0 }}{{ paginate.current_page }}-{{uniqueID}}" class="trigger-addtocart btn_{{ product.variants[0].id}} caps">ADD TO CART</span>
+    </div>
+    {% endif %}
+  </div>
+  <a id="product-{{ product.variants.first.id }}" class="product-link" href="{{ product.url | within: collection }}" aria-label='{{ product.title }}'>
+
+    <div class="product-information"
+         data-aos="fade-up"
+         data-aos-anchor=".product-grid"
+         data-aos-delay="{{ animation_delay | times: 100 }}"
+         data-aos-duration="{{ animation_delay | times: 100 | plus: 100 }}">
+
+      {%- if showReviews -%}
+      {%- if settings.enable_yotpo and settings.yotpo_ID != '' -%}
+      <div class="yotpo bottomLine" data-product-id="{{ product.id }}"></div>
+      {%- else -%}
+      <span class="shopify-product-reviews-badge" data-id="{{ product.id }}"></span>
+      {%- endif -%}
+      {%- endif -%}
+
+      <h3 class="title">{{ product.title }}</h3>
+      <span class="price{% if product.compare_at_price > product.price %} sale{% endif %}">
+        {% if product.object_type == 'product' %}
+        {% if product.available %}
+        {% if product.compare_at_price > product.price %}
+        <span class="old-price">{{ product.compare_at_price | money }}</span>
+        {% endif %}
+        {% if product.price_varies %}
+        <small>{{ 'products.general.from' | t }}</small> {{ product.price_min | money }}
+        {% else %}
+        {{ product.price_min | money }}
+        {% endif %}
+        {% else %}
+        <span class="sold-out">{{ 'products.product.sold_out' | t }}</span>
+        {% endif %}
+        {% else %}
+        <span class="item-type">{{ item_type }}</span>
+        {% endif %}
+      </span>
+    </div>
+  </a>
+</div>
+{% endif %}
+
+

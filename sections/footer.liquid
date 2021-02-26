@@ -1,0 +1,313 @@
+<!-- /sections/footer.liquid -->
+
+{% assign logoImageWidth = section.settings.logo_image_width | append: "px" %}
+
+<footer class="site-footer-wrapper wide-image" role="contentinfo" data-section-id="{{ section.id }}" data-section-type="footer"
+  {%- if section.settings.image -%}
+    {%- assign img_object = section.settings.image -%}
+    {%- assign img_small = section.settings.image | img_url: '18x' -%}
+    {%- assign img_api = section.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+    id="FeaturedImage-{{ section.id }}"
+    data-parallax-src="{{ img_small }}"
+    data-src="{{ img_api }}"
+    data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048, 2450, 2700, 3000, 3350, 3750, 4100]"
+    data-aspectratio="{{  section.settings.image.aspect_ratio }}"
+    data-sizes="auto"
+  {%- endif -%}>
+  <div class="site-footer">
+    {% if section.settings.footer_logo %}
+    <style>
+      .footer__logo img { width: {{ logoImageWidth }}; }
+    </style>
+    <a href="/" class="footer__logo">
+      <img src="{{ section.settings.footer_logo | img_url: 'x200' }}" alt="{{ section.settings.footer_logo.alt | default: shop.name }}" id="footerLogoImg-{{ section.id }}"/>
+    </a>
+    {% endif %}
+    <div class="grid grid--uniform">
+
+      {% case section.blocks.size %}
+        {% when 0 %}
+        {% when 1 %}
+          {% assign footer_column_width = 'large-up--one-half' %}
+        {% when 2 %}
+          {% assign footer_column_width = 'medium-up--one-half' %}
+        {% when 3 %}
+          {% assign footer_column_width = 'large-up--one-third' %}
+        {% when 4 %}
+          {% assign footer_column_width = 'large-up--one-quarter medium--one-half' %}
+      {% endcase %}
+
+      {% for block in section.blocks %}
+        {% case block.type %}
+
+          {% when 'linklist' %}
+            {% assign linklist = linklists[block.settings.linklist] %}
+            <div class="footer__block grid__item {{ footer_column_width }}" {{ block.shopify_attributes }}>
+              <h5 class="footer__block__title caps">{{ linklist.title }} </h5>
+              <hr>
+              <ul class="footer__quicklinks unstyled">
+                {% for link in linklist.links %}
+                  <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+                {% endfor %}
+              </ul>
+            </div>
+
+          {% when 'page' %}
+            {% assign page = pages[block.settings.page] %}
+            {% if page == blank or page.empty? %}
+              <div class="footer__block grid__item {{ footer_column_width }}" {{ block.shopify_attributes }}>
+                <h5 class="footer__block__title caps">{{ shop.name }}</h5>
+                <hr>
+                <div class="rte">{{ 'home_page.onboarding.no_content' | t }}</div>
+              </div>
+            {% else %}
+              <div class="footer__block grid__item {{ footer_column_width }}" {{ block.shopify_attributes }}>
+                <h5 class="footer__block__title caps">{{ page.title | escape }}</h5>
+                <hr>
+                <div class="rte">{{ page.content }}</div>
+              </div>
+            {% endif %}
+
+          {% when 'social' %}
+            <div class="footer__block grid__item {{ footer_column_width }}" {{ block.shopify_attributes }}>
+              {%- assign social_accounts = 'Facebook, Twitter, Pinterest, Instagram, Snapchat, Tumblr, YouTube, Vimeo,' | split: ', ' -%}
+              <h5 class="footer__block__title caps">{{ block.settings.title | escape }}</h5>
+              <hr>
+              {% if block.settings.richtext != '<p></p>' %}
+                <div class="rte footer__social__text">
+                  {{ block.settings.richtext }}
+                </div>
+              {% endif %}
+              <ul class="footer__social unstyled inline-list">
+              {%- for social in social_accounts -%}
+                {%- assign social_handle = social | handleize -%}
+                {% capture social_link %}{{ social_handle }}_link{% endcapture %}
+                {% capture social_icon %}icon-{{ social_handle }}{% endcapture %}
+
+                {%- if settings[social_link] != blank -%}
+                  <li>
+                    <a href="{{ settings[social_link] }}" title="{{ 'layout.footer.social_platform' | t: name: shop.name, platform: social }}">
+                      {% include social_icon %}
+                      <span class="icon-fallback-text">{{ social }}</span>
+                    </a>
+                  </li>
+                {%- endif -%}
+
+              {%- endfor -%}
+              </ul>
+            </div>
+
+          {% when 'text' %}
+            <div class="footer__block grid__item {{ footer_column_width }}" {{ block.shopify_attributes }}>
+              <h5 class="footer__block__title caps">{{ block.settings.title | escape }}</h5>
+              <hr>
+              <div class="rte">{{ block.settings.text }}</div>
+            </div>
+
+          {% when 'newsletter' %}
+            <div class="footer__block grid__item {{ footer_column_width }}" {{ block.shopify_attributes }}>
+              <h5 class="footer__block__title caps">{{ 'layout.footer.newsletter_title' | t }}</h5>
+              <hr>
+              <div class="rte footer__newsletter__text">
+                {{ block.settings.richtext }}
+              </div>
+              {% form 'customer' %}
+                {% if form.posted_successfully? %}
+                  <p><em>{{ 'general.newsletter_form.thank_you' | t }}</em></p>
+                {% elsif form.errors %}
+                  {% for field in form.errors %}
+                    <p><em>{{ field }} - {{ form.errors.messages[field] }}</em></p>
+                  {% endfor %}
+                {% endif %}
+
+                <input type="hidden" name="contact[accepts_marketing]" value="true">
+                <div class="input-group newsletter-form">
+                  <input type="email" id="mail" class="input-group-field" aria-label="{{ 'general.newsletter_form.newsletter_email' | t }}" autocorrect="off" autocapitalize="off" name="contact[email]" />
+                  <span class="input-group-btn">
+                    <input type="submit" class="btn caps" name="subscribe" id="subscribe" value="{{ 'general.newsletter_form.submit' | t }}">
+                  </span>
+                </div>
+              {% endform %}
+            </div>
+
+          {% else %}
+        {% endcase %}
+      {% endfor %}
+    </div>
+
+    <div class="grid">
+      <ul class="footer__secondary grid__item inline-list unstyled {% if section.settings.footer_payment_enable %}medium-up--two-thirds{% endif %}">
+          <li class="footer__copyright"><a href="{{ shop.secure_url }}">&copy; {{ shop.name }} {{ 'now' | date: "%Y" }}</a></li>
+        {% for link in linklists[section.settings.footer_secondary_linklist].links %}
+          <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+        {% endfor %}
+
+        <!-- Remove the following two lines to delete Shopify credit -->
+          <li>{{ powered_by_link }}</li>
+        <!-- stop deleting here :) -->
+        
+      </ul>
+
+      {% if section.settings.footer_payment_enable %}
+        {% unless shop.enabled_payment_types == empty %}
+          <ul class="footer__payment payment-icons grid__item inline-list grid__item medium-up--one-third">
+            {% for type in shop.enabled_payment_types %}
+              <li>{{ type | payment_type_svg_tag: class:'payment-icon' }}</li>
+            {% endfor %}
+          </ul>
+        {% endunless %}
+      {% endif %}
+
+    </div>
+  </div>
+
+  {% if section.settings.image %}
+    {% assign overlay_opacity = section.settings.overlay_opacity | prepend: '.' %}
+    <div class="image-overlay" style="background-color:{{ section.settings.overlay_color }} !important; opacity:{{ overlay_opacity }};"></div>
+  {% endif %}
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "max_blocks": 4,
+  "settings": [
+    {
+      "label": "Footer logo",
+      "type": "image_picker",
+      "id": "footer_logo",
+      "info": "400 x 200px .png"
+    },
+    {
+      "type": "range",
+      "id": "logo_image_width",
+      "label": "Logo width (in pixels)",
+      "min": 50,
+      "max": 400,
+      "step": 10,
+      "unit": "px",
+      "default": 150
+    },
+    {
+      "type": "header",
+      "content": "Optional background image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Opacity",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "default": 15
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#000"
+    },
+    {
+      "type": "header",
+      "content": "Bottom bar"
+    },
+    {
+      "type": "link_list",
+      "id": "footer_secondary_linklist",
+      "label": "Link List",
+      "info": "This menu won't show dropdown items"
+    },
+    {
+      "type": "checkbox",
+      "id": "footer_payment_enable",
+      "label": "Show payment types",
+      "default": true
+    }
+  ],
+  "blocks" : [
+    {
+      "type": "linklist",
+      "name": "Link list",
+      "settings": [
+        {
+           "type": "link_list",
+           "id": "linklist",
+           "label": "Link list",
+           "default": "footer",
+           "info": "This menu won't show dropdown items"
+        }
+      ]
+    },
+    {
+      "type": "newsletter",
+      "name": "Newsletter",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Subscribers are under 'Accepts Marketing' in your [customer admin](/admin/customers)."
+        },
+        {
+          "id": "richtext",
+          "type": "richtext",
+          "label": "Newsletter description",
+          "default": "<p>Subscribe to get special offers, free giveaways, and once-in-a-lifetime deals.</p>"
+        }
+      ]
+    },
+    {
+      "type": "social",
+      "name": "Social",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Social"
+        },
+        {
+          "type": "richtext",
+          "id": "richtext",
+          "label": "Text",
+          "default": "<p></p>"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Text"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Share store details, promotions, or brand content with your customers.</p>"
+        }
+      ]
+    },
+    {
+      "type": "page",
+      "name": "Page",
+      "settings": [
+        {
+          "id": "page",
+          "type": "page",
+          "label": "Page"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

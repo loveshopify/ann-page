@@ -1,0 +1,17 @@
+<!-- snippets/onboarding-featured-products.liquid -->
+
+{% for i in (1..6) %}
+  <div class="grid__item {{ grid_width_small }} {{ grid_width_medium }} {{ grid_width_large }}">
+    <div class="product-grid-item">
+      <span>
+        {% capture imgCount %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+        {% capture svg_name %}product-{{ imgCount }}{% endcapture %}
+        {{ svg_name | placeholder_svg_tag: 'placeholder-svg' }}
+      </span>
+      <div class="figcaption hover">
+        <p class="name_wrapper"><span>{{ 'home_page.onboarding.product_title' | t }}</span></p>
+        <p class="price_wrapper"><span class="price">{{ 1999 | money }}</span></p>
+      </div>
+    </div>
+  </div>
+{% endfor %}

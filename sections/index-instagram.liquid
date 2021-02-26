@@ -1,0 +1,148 @@
+<!-- /sections/index-instagram.liquid -->
+
+{% assign instagram_grid_width_large = 'large-up--one-sixth' %}
+{% assign instagram_grid_width_medium = 'medium--one-third' %}
+{% assign instagram_grid_width_small = 'small--one-half' %}
+
+{% case section.settings.instagram_grid_setting_large %}
+  {% when 2 %}
+    {% assign instagram_grid_width_large = 'large-up--one-half' %}
+  {% when 3 %}
+    {% assign instagram_grid_width_large = 'large-up--one-third' %}
+  {% when 4 %}
+    {% assign instagram_grid_width_large = 'large-up--one-quarter' %}
+  {% when 5 %}
+    {% assign instagram_grid_width_large = 'large-up--one-fifth' %}
+  {% when 6 %}
+    {% assign instagram_grid_width_large = 'large-up--one-sixth' %}
+{% endcase %}
+
+{% case section.settings.instagram_grid_setting_medium %}
+  {% when 2 %}
+    {% assign instagram_grid_width_medium = 'medium--one-half' %}
+  {% when 3 %}
+    {% assign instagram_grid_width_medium = 'medium--one-third' %}
+  {% when 4 %}
+    {% assign instagram_grid_width_medium = 'medium--one-quarter' %}
+{% endcase %}
+
+{% case section.settings.instagram_grid_setting_small %}
+  {% when 2 %}
+    {% assign instagram_grid_width_small = 'small--one-half' %}
+  {% when 3 %}
+    {% assign instagram_grid_width_small = 'small--one-third' %}
+  {% when 4 %}
+    {% assign instagram_grid_width_small = 'small--one-quarter' %}
+{% endcase %}
+
+{% assign photos_count = section.settings.instagram_photo_count | minus: section.blocks.size %}
+
+<div class="index-instagram" data-section-id="{{ section.id }}" data-section-type="instagram" data-grid="{{instagram_grid_width_large}} {{instagram_grid_width_medium}} {{instagram_grid_width_small}}">
+  {% unless section.settings.title == '' %}
+    <h2 class="theme coll-heading" data-aos="fade-up">{{ section.settings.title }}</h2>
+  {% endunless %}
+  <div class="grid grid--uniform grid--full instagram__feed">
+    {% for block in section.blocks %}
+      <a href="{{ block.settings.link }}" target="_blank" id="Instagram-featured-{{ block.id }}"
+        class="instagram__image js-instagram grid__item {{instagram_grid_width_large}} {{instagram_grid_width_medium}} {{instagram_grid_width_small}}"
+        data-url="{{block.settings.link}}"
+        {{ block.shopify_attributes }}>
+        {% unless block.settings.link contains 'instagr' %}
+          {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+        {% endunless %}
+        <span class="visually-hidden">Instagram</span>
+      </a>
+    {% endfor %}
+
+    {% if section.settings.token == '' %}
+      {% for i in (1..photos_count) %}
+        <div class="instagram__image js-instagram grid__item {{instagram_grid_width_large}} {{instagram_grid_width_medium}} {{instagram_grid_width_small}}">
+          {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      {% endfor %}
+    {% else %}
+      <div id="Instafeed-{{ section.id }}" class="grid-uniform" data-count="{{ photos_count }}" data-access-token="{{ section.settings.token }}" data-grid="{{instagram_grid_width_large}} {{instagram_grid_width_medium}} {{instagram_grid_width_small}}"></div>
+    {% endif %}
+
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Instagram feed",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Instagram"
+      },
+      {
+        "type": "text",
+        "id": "token",
+        "label": "Instagram access token",
+        "info": "[Generate Instagram access token](http://help.groupthought.com/article/25-create-an-instagram-token)"
+      },
+      {
+        "type":    "range",
+        "id":      "instagram_photo_count",
+        "min":     1,
+        "max":     12,
+        "step":    1,
+        "label":   "Number of photos to display",
+        "default": 4
+      },
+      {
+        "type": "header",
+        "content": "Photos per row"
+      },
+      {
+        "type":    "range",
+        "id":      "instagram_grid_setting_large",
+        "min":     2,
+        "max":     6,
+        "step":    1,
+        "label":   "Desktop",
+        "default": 4
+      },
+      {
+        "type":    "range",
+        "id":      "instagram_grid_setting_medium",
+        "min":     2,
+        "max":     4,
+        "step":    1,
+        "label":   "Tablet",
+        "default": 4
+      },
+      {
+        "type":    "range",
+        "id":      "instagram_grid_setting_small",
+        "min":     2,
+        "max":     4,
+        "step":    1,
+        "label":   "Mobile",
+        "default": 2
+      }
+    ],
+    "blocks": [
+      {
+        "type": "instagram",
+        "name": "Pinned post",
+        "settings": [
+          {
+            "label": "Instagram Link",
+            "id": "link",
+            "type": "text",
+            "info": "If you pin a post from another feed, ensure you have permission to share the image on your site."
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Instagram",
+        "category": "Social"
+      }
+    ]
+  }
+{% endschema %}

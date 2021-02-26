@@ -1,0 +1,120 @@
+<!-- /snippets/product-form.liquid -->
+
+{% assign enable_swatches = settings.color_swatches %}
+{% assign enable_variant_lines = settings.variant_lines %}
+
+ {% form 'product', product, class: 'product-form', data-swatches: enable_swatches %}
+  {% include 'product-customizer' %}
+  
+  {% assign is_personalized = false %}
+  {% for collection in product.collections %}
+    {% if collection.handle == 'personalized-stationery' %}
+      {% assign is_personalized = true %}
+    {% endif %}
+  {% endfor %}
+
+  {% if is_personalized %}
+
+  <p class="line-item-property__field">
+      <label for="name">Name :</label>
+      <input class="required" id="name" type="text" name="properties[Name]" required>
+  </p>
+
+ {% endif %}
+
+  {% unless product.has_only_default_variant %}
+    <div class="product__selectors swatch--{{ product.id }}">
+
+      {%- if enable_variant_lines -%}
+        {%- include 'product-variants' -%}
+      {%- else -%}
+        {% for option in product.options_with_values %}
+          {%- if enable_swatches -%}
+            {%- assign downcased_option = option.name | downcase -%}
+            {%- if downcased_option contains 'color' or downcased_option contains 'colour' -%}
+              {%- include 'product-option--color-swatch' -%}
+            {%- else -%}
+              {%- include 'product-option' -%}
+            {%- endif -%}
+          {%- else -%}          
+            {%- include 'product-option' -%}
+          {%- endif -%}
+        {% endfor %}
+      {% endif %}
+    </div>
+  {% endunless %}
+
+  <select name="id" class="no-js" data-product-select>
+    {% for variant in product.variants %}
+      <option
+        {% if variant == current_variant %}selected="selected"{% endif %}
+        {% unless variant.available %}disabled="disabled"{% endunless %}
+        value="{{ variant.id }}">
+          {{ variant.title }}
+      </option>
+    {% endfor %}
+  </select>
+
+  <div class="js-qty quantity-selector">
+    <label for="Quantity" class="label-hidden">{{ 'products.product.quantity' | t }}</label>
+    <span class="js-qty__adjust js-qty__adjust--minus quantity__minus">{% include "icon-minus" %}</span>
+    <input type="text" class="js-qty__num quantity__input" value="1" min="1" aria-label="quantity" pattern="[0-9]*" name="quantity">
+    <span class="js-qty__adjust js-qty__adjust--plus quantity__plus">{% include "icon-plus" %}</span>
+  </div>
+
+  <div class="product__submit {% if buybutton_setting %}product__submit--spb{% endif %}" data-product-id="{{product.id}}">
+    <div class="product__submit__buttons">
+      <button
+        type="submit"
+        name="add"
+        class="btn add-js product__submit__add"
+        data-add-to-cart
+        {% unless current_variant.available %}disabled="disabled"{% endunless %}>
+          <span data-add-to-cart-text>
+            {% if current_variant.available %}
+              {{ 'products.product.add_to_cart' | t }}
+            {% else %}
+              {{ 'products.product.sold_out' | t }}
+            {% endif %}
+          </span>
+      </button>
+
+      {% if buybutton_setting %}
+        {% if product.metafields.product_customizer == empty %}{{ form | payment_button }}{% endif %}
+      {% endif %}
+    </div>
+    
+    <div id="CartPopoverCont" class="cart-popover"></div>
+
+    <script id="CartPopover" type="text/x-handlebars-template">
+      <span class="close">{% include 'icon-close-thin' %}</span>
+      <div class="product__add__notification">
+        <div class="product__add__success">
+          <div class="product__add__success__image">
+            {% capture product_image %}{% raw %}{{ image }}{% endraw %}{% endcapture %}
+            <div class="product__add__success__image-bg lazyload"
+              data-bgset="{% include 'bgset', image: product_image %}"
+              data-sizes="auto"
+              data-parent-fit="cover">
+            </div>
+          </div>
+          <div class="product__add__success__content">
+            <h6>{{ 'products.product.added' | t }}</h6>
+            {% raw %}
+            <h3 class="product__title">{{ item_count }} {{ product_title }}</h3>
+            <p class="product__variant">{{ variant }}</p>
+            <p class="product__price">{{{ price_formatted }}}</p>
+            {% endraw %}
+            <div class="buttons-wrap">
+              <a href="/checkout" class="btn btn--primary">{{ "cart_popover.checkout" | t }}</a>
+              <a href="/cart" class="btn btn--secondary">{{ "cart_popover.view_cart" | t }}</a>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </script>
+  
+  </div>
+
+{% endform %}

@@ -1,0 +1,110 @@
+<!-- /sections/index-collections-list.liquid -->
+
+{% case section.blocks.size %}
+  {% when 0 %}
+    {% assign grid_width = 'one-quarter small--one-whole' %}
+  {% when 1 %}
+    {% assign grid_width = 'one-whole' %}
+  {% when 2 %}
+    {% assign grid_width = 'one-half small--one-whole' %}
+  {% when 3 %}
+    {% assign grid_width = 'one-third small--one-whole' %}
+  {% else %}
+    {% assign grid_width = 'one-quarter small--one-whole' %}
+{% endcase %}
+
+
+<section class="index-collections-list" data-section-id="{{ section.id }}" data-section-type="list-collections">
+  {% if section.settings.title != blank %}
+  <h2 class="theme coll-heading">{{ section.settings.title }}</h2>
+  {% endif %}
+
+  <div class="container">
+    <div class="collection-list flickity-slider--default" data-arrows-style="{{ section.settings.arrows_style }}">
+      {% if section.blocks.size > 0 %}
+        {% for block in section.blocks %}
+          {% assign collection = collections[block.settings.collection] %}
+          {% assign collection_title = block.settings.title %}
+          {% assign animation_delay = forloop.index0 | times:1 %}
+
+          {% include 'collection-list-item' %}
+        {% endfor %}
+      {% else %}
+        {% for i in (1..4) %}
+          {% assign animation_delay = forloop.index0 | times:1 %}
+          {% include 'collection-list-item' %}
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+
+{% schema %}
+{
+  "name": "Collection list",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Collection list"
+    },
+    {
+      "type": "select",
+      "id": "arrows_style",
+      "label": "Arrows style",
+      "default": "dark",
+      "options": [
+        {
+          "value": "dark",
+          "label": "Dark"
+        },
+        {
+          "value": "light",
+          "label": "Light"
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Collection",
+      "limit": 8,
+      "settings": [
+        {
+          "label": "Collection",
+          "id": "collection",
+          "type": "collection"
+        },
+        {
+          "label": "Title",
+          "id": "title",
+          "type": "text"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "category": "Collection",
+      "name": "Collection list",
+      "blocks": [
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

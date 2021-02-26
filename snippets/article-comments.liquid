@@ -1,0 +1,109 @@
+<!-- /snippets/article-comments.liquid -->
+
+{% paginate article.comments by 5 %}
+  {% if article.comments_count > 0 %}
+    <div class="comments" id="comments">
+      <div class="hr"></div>
+      <h3>{{ 'blogs.comments.comments_with_count' | t: count: number_of_comments }}</h3>
+      <div class="hr"></div>
+      <!-- a "just published" comment -->
+      {% if comment and comment.created_at %}
+        <div id="comment-{{ comment.id }}" class="comment">
+          <div class="comment-body">
+            <div class="comment-meta">
+              {% assign comment_date = comment.created_at | date: format: 'full_date' %}
+              <span class="author">{{ comment.author }}</span>
+              <span class="label"><time datetime="{{ comment_date }}">{{ comment_date }}</time></span>
+            </div>
+            {{ comment.content }}
+          </div>
+        </div>
+      {% endif %}
+      <!-- previous comments -->
+      {% for comment in article.comments %}
+        <div id="comment-{{ comment.id }}" class="comment">
+          <div class="comment-body">
+            <div class="comment-meta">
+              {% assign comment_date = comment.created_at | date: format: 'full_date' %}
+              <span class="author">{{ comment.author }}</span>
+              <span class="label"><time datetime="{{ comment_date }}">{{ comment_date }}</time></span>
+            </div>
+            {{ comment.content }}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if paginate.pages > 1 %}
+    <div class="paginate">
+      {% if paginate.previous %}
+          <span class="left">{{ '&larr;' | link_to: paginate.previous.url }}</span>
+      {% endif %}
+      {% for part in paginate.parts %}
+        {% if part.is_link %}
+          <span class="num">{{ part.title | link_to: part.url }}</span>
+        {% else %}
+          <span class="num current">{{ part.title }}</span>
+        {% endif %}
+      {% endfor %}
+      {% if paginate.next %}
+        <span class="right">{{ '&rarr;' | link_to: paginate.next.url }}</span>
+      {% endif %}
+    </div>
+    <div class="hr"></div>
+  {% endif %}
+
+  <div class="comments-form">
+    <div class="hr"></div>
+    <h3>{{ 'blogs.comments.title' | t }}</h3>
+    <div class="hr"></div>
+    {% form article %}
+      {% if form.posted_successfully? %}
+          {% if blog.moderated? %}
+              <p class="flash"><em>{{ 'blogs.comments.success_moderated' | t }}</em></p>
+          {% else %}
+              <p class="flash"><em>{{ 'blogs.comments.success' | t }}</em></p>
+          {% endif %}
+      {% endif %}
+      {% if form.errors %}
+          <p class="error">{{ 'general.forms.post_error' | t }}</p>
+      {% endif %}
+      <div class="form-row">
+        <div class="form-field">
+          <label for="comment_author">{{ 'blogs.comments.name' | t }}</label>
+          <input type="text" id="comment_author" name="comment[author]" value="{{ form.author }}" placeholder="{{ 'blogs.comments.name' | t }}" />
+        </div>
+        <div class="form-field">
+          <label for="comment_email">{{ 'blogs.comments.email' | t }}</label>
+          <input type="text" id="comment_email" name="comment[email]" value="{{ form.email }}" placeholder="{{ 'blogs.comments.email' | t }}" />
+        </div>
+      </div>
+      <div class="form-field">
+        <label for="comment_body">{{ 'blogs.comments.comment' | t }}</label>
+        <textarea id="comment_body" name="comment[body]" rows="5" placeholder="{{ 'blogs.comments.comment' | t }}" >{{ form.body }}</textarea>
+      </div>
+
+      <div class="form-field">
+        {% if blog.moderated? %}
+          <p><em>{{ 'blogs.comments.moderated' | t }}</em></p>
+        {% endif %}
+
+        <input type="submit" value="{{ 'blogs.comments.post' | t }}" id="comment-submit" class="btn" />
+
+        {% if form.errors %}
+          <script>
+            window.location.hash = '#add-comment-title';
+          </script>
+        {% endif %}
+
+        {% if form.posted_successfully? %}
+          <script>
+            window.location.hash = '#comments';
+          </script>
+        {% endif %}
+
+      </div>
+    {% endform %}
+  </div>
+{% endpaginate %}

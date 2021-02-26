@@ -1,0 +1,10 @@
+<div class="collection__sorting">
+  <div class="js-dropdown">
+    <span class="js-dropdown__label">{{ 'collections.general.sort' | t }}</span>
+    <ul name="sort_by" id="sort_by" class="js-dropdown__list">
+      {% for option in collection.sort_options %}
+        <li data-value="{{ option.value }}">{{ option.name }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>

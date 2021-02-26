@@ -1,0 +1,19 @@
+<!-- /snippets/pagination.liquid -->
+
+{% if paginate.pages > 1 %}
+  <div class="pagination">
+    {% if paginate.previous %}
+        <span class="prev-page">{{ '&larr;' | link_to: paginate.previous.url }}</span>
+    {% endif %}
+    {% for part in paginate.parts %}
+        {% if part.is_link %}
+            <span class="curr-page">{{ part.title | link_to: part.url }}</span>
+        {% else %}
+            <span class="current">{{ part.title }}</span>
+        {% endif %}
+    {% endfor %}
+    {% if paginate.next %}
+        <span class="next-page">{{ '&rarr;' | link_to: paginate.next.url }}</span>
+    {% endif %}
+  </div>
+{% endif %}

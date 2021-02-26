@@ -1,0 +1,87 @@
+<!-- /sections/index-rich-text.liquid -->
+
+{% if section.settings.logo == blank %}
+  {% assign no_logo = "no-logo" %}
+{% endif %}
+
+<section class="index-rte rich-text" data-section-id="{{ section.id }}" data-section-type="rich-text">
+  <div class="wrapper"
+    data-aos-duration="500"
+    data-aos="fade-up">
+    <div class="grid">
+      <div class="grid__item medium-up--push-one-sixth medium-up--four-sixths">
+        {% unless section.settings.logo == blank %}
+          <div class="rich-text-image">
+            {%- assign image = section.settings.logo -%}
+            <img
+              class="lazyload rich-text__logo"
+              src="{{ image | img_url: '540x' }}"
+              data-src="{{ img_url }}"
+              data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 1944, 2048]"
+              data-aspectratio="{{ image.aspect_ratio }}"
+              data-sizes="auto"
+              data-parent-fit="contain"
+              alt="{{ image.alt | escape }}">
+            <noscript>
+              <img class="rich-text__logo no-js-image" src="{{ image | img_url: '180x' }}" alt="{{ image.alt | escape }}">
+            </noscript>
+          </div>
+        {% endunless %}
+
+        <div class="rich-text__content">
+          {% if section.settings.title %}
+            <h3>{{section.settings.title}}</h3>
+          {% endif %}
+          {% if section.settings.text %}
+            {{ section.settings.text }}
+          {% endif %}
+          {% if section.settings.button_text != blank %}
+          <a href="{{ section.settings.button_url }}" class="btn btn--large btn--secondary btn--neutral caps">{{ section.settings.button_text }}</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Rich text",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Rich text"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Use this text to share information about your brand with your customers. Describe a product, share announcements, or welcome customers to your store.</p>"
+    },
+    {
+      "type":"text",
+      "id":"button_text",
+      "label":"Button text",
+      "default":"Learn More"
+    },
+    {
+      "type":"url",
+      "id":"button_url",
+      "label":"Button link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Rich text",
+      "category": "Text"
+    }
+  ]
+}
+{% endschema %}

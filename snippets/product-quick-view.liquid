@@ -1,0 +1,113 @@
+<!-- /snippets/product-quick-view.liquid -->
+
+{%- assign current_variant = product.selected_or_first_available_variant -%}
+{%- assign featured_image = current_variant.featured_image | default: product.featured_image -%}
+
+<div class="modal__wrapper modal--product">
+  <div class="modal__inner__wrapper">
+    <div class="grid">
+      <div class="grid__item medium-up--one-half small--one-third">
+        <div class="product__slides product-single__photos" data-product-slideshow>
+          {%- assign featured_image = current_variant.featured_image | default: product.featured_image -%}
+          {%- assign img_api = featured_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+          <div class="lazy-image product__photo" data-thumb="{{ featured_image.src | img_url: 'small_cropped' }}" data-product-photo-wrapper>
+            <div data-zoom-wrapper class="lazy-image" style="padding-top:{{ 1 | divided_by: featured_image.aspect_ratio | times: 100}}%; background-image:  url('{{ featured_image.src | img_url: '1x1' }}');">
+              <img data-zoom data-src="{{  featured_image.src | img_url: '3000x' }}" style="display: none;" alt="{{ 'products.product.zoom' | t }}">
+              <img data-product-featured-image data-product-image class="fade-in lazyload"
+                data-image-id="{{ featured_image.id }}"
+                alt="{{ featured_image.alt | default: product.title | escape }}"
+                data-src="{{ img_api }}"
+                data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+                data-aspectratio="{{ featured_image.aspect_ratio }}"
+                data-sizes="auto"/>
+            </div>
+            {% if featured_image.alt contains 'youtube.com' or featured_image.alt contains 'vimeo.com' %}
+              <a href="{{ featured_image.alt }}" class="productVideo product__play">
+                <span class="icon icon-play">{% include 'icon-play' %}</span>
+                <span class="visually-hidden">&#9658;</span>
+              </a>
+            {% endif %}
+          </div>
+
+          {% for image in product.images %}
+            {% unless image contains featured_image %}
+              {%- assign img_api = image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+              <div class="product__photo{% unless forloop.first == true %} product__photo--additional{% endunless %}"  data-thumb="{{ image.src | img_url: 'small_cropped' }}">
+                <div data-zoom-wrapper class="lazy-image" style="padding-top:{{ 1 | divided_by: image.aspect_ratio | times: 100}}%; background-image:  url('{{ image.src | img_url: '1x1' }}');">
+                  <img data-zoom data-src="{{  image.src | img_url: '3000x' }}" style="display: none;" alt="{{ 'products.product.zoom' | t }}">
+                  <img data-product-image class="fade-in lazyload"
+                    data-image-id="{{ image.id }}"
+                    alt="{{ image.alt | default: product.title | escape }}"
+                    data-src="{{ img_api }}"
+                    data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+                    data-aspectratio="{{ image.aspect_ratio }}"
+                    data-sizes="auto"/>
+                </div>
+                {% if image.alt contains 'youtube.com' or image.alt contains 'vimeo.com' %}
+                  <a href="{{ image.alt }}" class="productVideo product__play">
+                    <span class="icon icon-play">{% include 'icon-play' %}</span>
+                    <span class="visually-hidden">&#9658;</span>
+                  </a>
+                {% endif %}
+              </div>
+            {% endunless %}
+          {% endfor %}
+        </div>
+        <noscript>
+          {% for image in product.images %}
+            <img src="{{ image | img_url: '900x' }}" alt="{{ image.alt | default: product.title  }}">
+          {% endfor %}
+        </noscript>
+        <div data-product-thumbs class="product__thumbs--square"></div>
+      </div>
+      <div class="grid__item medium-up--one-half small--two-thirds" data-form-wrapper>
+        <div class="product__title__wrapper">
+          <h2 class="product__title">{{ product.title }}</h2>
+          <div class="h5--body product__price" data-price-wrapper>
+            <span data-product-price {% if current_variant.compare_at_price > current_variant.price %} class="product__price--sale"{% endif %}>
+              {{ current_variant.price | money }}
+            </span>
+
+            {% if product.compare_at_price_max > product.price %}
+              <span class="visually-hidden" data-compare-text>{{ 'products.product.regular_price' | t }}</span>
+              <s class="product__price--strike" data-compare-price>
+                {% if current_variant.compare_at_price > current_variant.price %}
+                  {{ current_variant.compare_at_price | money }}
+                {% endif %}
+              </s>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="form__wrapper {% unless current_variant.available %}variant--soldout{% endunless %}" data-form-wrapper>
+          {% include 'product-form', buybutton_setting: settings.quickview_buybutton_enable %}
+        </div>
+
+        <div class="product-description rte">
+          {{ product.description | split: '<h6>' | first | strip_html | truncatewords: 30, '...' }}
+        </div>
+
+        <div class="hr"></div>
+        <p>
+          <a href="{{ product.url }}" class="more">{{ 'products.general.view_product' | t }} &rarr;</a>
+        </p>
+      </div>
+    </div>
+
+    {%- assign uniqueID = section.id -%}
+    {%- if template.name == 'list-collections' -%}
+      {%- assign uniqueID = collection.id -%}
+    {%- endif -%}
+
+    <a class="prev close" data-modal="Product{{ forloop.index0 }}{{ paginate.current_page }}-{{uniqueID}}--prev" href="javascript:void(0)"><span class="visually-hidden">{{ 'products.general.previous_product_html' | t }}</span>{% include 'icon-arrow-left-thin' %}</a>
+    <a class="next close" data-modal="Product{{ forloop.index0 }}{{ paginate.current_page }}-{{uniqueID}}--next" href="javascript:void(0)"><span class="visually-hidden">{{ 'products.general.next_product_html' | t }}</span>{% include 'icon-arrow-right-thin' %}</a>
+
+    <span class="close">{% include 'icon-close-thin' %}</span>
+  </div>
+</div>
+
+{% unless product == empty %}
+  <script type="application/json" data-product-json>
+    {{ product | json }}
+  </script>
+{% endunless %}

@@ -1,0 +1,23 @@
+<div class="search">
+  <form class="search__form" method="get" action="/search">
+    <input type="text" name="q"
+      value="{% if search.performed %}{{ search.terms | escape | downcase }}{% endif %}"
+      placeholder="{{ 'general.search.placeholder' | t }}"
+      aria-label="{{ 'general.search.placeholder' | t }}"
+      class="search-query"/>
+    <input type="hidden" name="type" value="product">
+    <span class="remove-search"></span>
+  </form>
+
+  <div class="search__results">
+    <div class="search__results-scroller">
+      <div class="search__results-container">
+        <div class="search-outer"></div>
+        <div class="search__results-list product-grid product-grid--results"></div>
+        <div class="loader loader--search">
+          <div class="loader-indeterminate"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

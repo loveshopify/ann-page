@@ -1,0 +1,270 @@
+<!-- /sections/index-blog.liquid -->
+{%- assign blog = blogs[section.settings.index_blog] -%}
+
+{% assign onboarding = false %}
+{% if section.settings.blog_name == blank %}
+  {% assign onboarding = true %}
+{% endif %}
+
+{% case section.settings.grid %}
+  {% when 1 %}
+    {% assign grid_width_large = 'large-up--one-half large-up--push-one-quarter clear' %}
+    {% assign grid_width_medium = 'medium--one-half medium--push-one-quarter clear' %}
+    {% assign grid_width_small = 'small--one-whole' %}
+  {% when 2 %}
+    {% assign grid_width_large = 'large-up--one-half' %}
+    {% assign grid_width_medium = 'medium--one-half' %}
+    {% assign grid_width_small = 'small--one-whole' %}
+  {% when 3 %}
+    {% assign grid_width_large = 'large-up--one-third' %}
+    {% assign grid_width_medium = 'medium--one-third' %}
+    {% assign grid_width_small = 'small--one-whole' %}
+  {% else %}
+    {% assign grid_width_large = 'large-up--one-quarter' %}
+    {% assign grid_width_medium = 'medium--one-half' %}
+    {% assign grid_width_small = 'small--one-whole' %}
+{% endcase %}
+
+{%- assign article_limit = section.settings.grid | times: section.settings.rows -%}
+
+{% assign blogArticles = blogs[section.settings.blog_name].articles %}
+{% assign blogLink = blogs[section.settings.blog_name].url %}
+{% assign blogTitle = section.settings.title %}
+{% assign blogText = section.settings.blog_text %}
+{% assign showAuthor = section.settings.show_author %}
+{% assign showDate = section.settings.show_date %}
+{% assign showButton = section.settings.show_button %}
+{% assign showTags = section.settings.show_tags %}
+
+<section class="index-blog blog blog-section {% if blogTitle == blank %}blog--no-title{% endif %}" data-section-id="{{ section.id }}" data-section-type="blog">
+
+    {% if blogTitle != blank %}
+      <h2 class="theme blog__title"><a href="{{ blogLink }}">{{ blogTitle }}</a></h2>
+    {% endif %}
+
+    {% if blogText != blank %}
+      <div class="content-container center">
+        {% if blogText != blank %}
+          <p class="blog__text">{{ blogText }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="blog-listing grid grid--uniform">
+     {% if onboarding %}
+        {% for i in (1..article_limit) %}
+          <article class="article article--onboarding grid__item {{ grid_width_small }} {{ grid_width_medium }} {{ grid_width_large }}">
+            <a href="#!" title="Article title" aria-label="{{ article.title }}">
+                <div class="article__image svg-placeholder">
+                    {{ 'image' | placeholder_svg_tag }}
+
+                    <div class="image-overlay" style="background-color:{{ section.settings.settings.overlay_color }} !important; opacity:{{ section.settings.overlay_opacity | prepend: '0.' }};"></div>
+
+                    {% if showTags %}
+                      <div class="article__footer">
+                        <h6 class="article__tags">
+                          <span class="article__tag">tag</span><span class="article__tag">tag</span>
+                        </h6>
+                      </div>
+                    {% endif %}
+                </div>
+            </a>
+
+            <div class="article__text-wrapper">
+
+              <h2 class="article__title"><a href="#!" title="Article title">Blog post title</a></h2>
+
+              {% if showDate or showAuthor %}
+                <h3 class="article__meta">
+                  {% if showDate %}
+                    <time datetime="Feb. 15, {{ 'now' | date: format: 'full_date' }}">Feb. 15, {{ 'now' | date: format: 'full_date' }}</time>
+                  {% endif %}
+
+                  {% if showAuthor %}
+                    <span>by Author Name</span>
+                  {% endif %}
+                </h3>
+              {% endif %}
+
+              <p class="article__excerpt">Once you create a blog post, the content will appear here. It will display the first few lines of text here or a summary of the post that could be added from the Excerpt section in Blog posts editor.</p>
+
+              {% if showButton %}
+                <p class="article__link"><a href="#!">{{ 'blogs.article.read_more' | t }} &rarr;</a></p>
+              {% endif %}
+
+            </div>
+          </article>
+        {% endfor %}
+      {% else %}
+        {% for article in blogArticles limit: article_limit %}
+          {% assign grid_int = section.settings.grid | times:1 %}
+          {% assign animation_delay = forloop.index0  | modulo:grid_int | times:1 %}
+
+          {%- capture tags -%}
+            {%- if article.tags.size > 0 and showTags -%}
+              <h6 class="article__tags">
+                {%- for tag in article.tags -%}
+                  <a href="{{ shop.url }}/blogs/{{ blog.handle }}/tagged/{{ tag | handleize }}" title="{{ blog.title }} tagged {{ tag | escape }}" class="article__tag">{{ tag }}</a>
+                {%- endfor -%}
+              </h6>
+            {%- endif -%}
+          {%- endcapture -%}
+
+          <article class="article grid__item {{ grid_width_small }} {{ grid_width_medium }} {{ grid_width_large }}"
+            data-aos="fade-up"
+            data-aos-delay="{{ animation_delay | times: 100 }}"
+            data-aos-duration="{{ animation_delay | times: 100 | plus: 400 }}">
+            {% if article.image %}
+              <div>
+                <div class="article__image">
+                  <div class="background-size-cover lazyload"
+                        data-aos="img-in"
+                        data-aos-delay="{{ animation_delay | times: 150 }}"
+                        data-aos-duration="{{ animation_delay | times: 100 | plus: 800 }}"
+                        data-aos-easing="ease-out-quart"
+                        data-bgset="{% include 'bgset', image: article.image %}">
+                    <a href="{{ article.url }}" aria-label="{{ article.title }}" class="article__image-link">
+                      <div class="image-overlay" style="background-color:{{ section.settings.overlay_color }} !important; opacity: {{ section.settings.overlay_opacity | prepend: '0.' }};"></div>
+                    </a>
+                  </div>
+                  <noscript>
+                    <img src="{{ article.image | img_url: '540x' }}" alt="{{ article.image.alt | default: article.title }}"/>
+                  </noscript>
+
+                  {{ tags }}
+                </div>
+              </div>
+            {% else %}
+              {{ tags }}
+            {% endif %}
+
+            <div class="article__text-wrapper">
+              <h2 class="article__title">
+                <a href="{{ article.url }}" title="{{ article.title | escape }}">
+                  {{ article.title }}
+                </a>
+              </h2>
+
+              {% if showDate or showAuthor %}
+                <h3 class="article__meta">
+                  {% if showDate %}
+                    {% assign published_at = article.published_at | date: format: 'full_date' %}
+                    <time datetime="{{ published_at }}">{{ published_at }}</time>
+                  {% endif %}
+
+                  {% if showAuthor %}
+                    <span>{{ 'blogs.article.by_author' | t: author: article.author }} </span>
+                  {% endif %}
+                </h3>
+              {% endif %}
+
+              <p class="article__excerpt">{{ article.excerpt_or_content | strip_html  | truncatewords: 30 }}</p>
+
+              {% if showButton %}
+                <p class="article__link"><a href="{{ article.url }}">{{ 'blogs.article.read_more' | t }}  &rarr;</a></p>
+              {% endif %}
+
+            </div>
+          </article>
+        {% endfor %}
+      {% endif %}
+    </div>
+
+</section>
+
+{% schema %}
+  {
+    "name": "Blog posts",
+    "settings": [
+      {
+        "type": "blog",
+        "id": "blog_name",
+        "label": "Blog"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Blog posts"
+      },
+      {
+        "type": "textarea",
+        "id": "blog_text",
+        "label": "Text"
+      },
+      {
+        "type":    "range",
+        "id":      "grid",
+        "min":     1,
+        "max":     4,
+        "step":    1,
+        "label":   "Articles per row",
+        "default": 4
+      },
+      {
+        "type":    "range",
+        "id":      "rows",
+        "min":     1,
+        "max":     10,
+        "step":    1,
+        "label":   "Number of rows",
+        "default": 1
+      },
+      {
+        "type": "header",
+        "content": "Articles"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_author",
+        "label": "Show author",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "show_date",
+        "label": "Show date",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "show_button",
+        "label": "Show button",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_tags",
+        "label": "Show tags",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "Overlay"
+      },
+      {
+        "type": "range",
+        "id": "overlay_opacity",
+        "label": "Opacity",
+        "info": "Increase contrast for legible text.",
+        "unit": "%",
+        "min": 0,
+        "max": 90,
+        "step": 5,
+        "default":15
+      },
+      {
+        "type": "color",
+        "id": "overlay_color",
+        "label": "Overlay color",
+        "default": "#000"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Blog posts",
+        "category": "Blog"
+      }
+    ]
+  }
+{% endschema %}

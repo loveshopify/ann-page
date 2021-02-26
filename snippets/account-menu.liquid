@@ -1,0 +1,14 @@
+<!-- /snippets/article-menu.liquid -->
+
+<aside class="account-sidebar">
+  <span class="desktop"><b>{{ 'customer.account.title' | t }}</b></span>
+  <span class="account-sidebar--mobile">{{ 'customer.account.title' | t }}</span>
+  <ul>
+    <li><a href="/account/">{{ 'customer.orders.title' | t }}</a></li>
+    <li><a href="/account/addresses/">{{ 'customer.account.view_addresses' | t }}</a></li>
+	{% if shop.email %}
+    <li><a href="mailto:{{shop.email}}" target="_blank">{{ 'customer.account.contact_store' | t }}</a></li>
+    <li>{{ 'layout.customer.log_out' | t | customer_logout_link }}</li>
+	{% endif %}
+  </ul>
+</aside>

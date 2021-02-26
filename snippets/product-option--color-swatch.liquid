@@ -1,0 +1,28 @@
+<div class="selector-wrapper selector-wrapper--color js" data-option="option{{ option.position }}">
+  <label class="variant-label" for="SingleOptionSelector-{{ forloop.index0 }}-{{product.id}}">
+    {{ option.name }}
+  </label>
+
+  <fieldset
+    id="SingleOptionSelector-{{ forloop.index0 }}-{{product.id}}"
+    class="variant-input-wrap"
+    data-index="option{{ option.position }}">
+    <div class="swatch clearfix">
+      {% for value in option.values %}
+        <div data-value="{{ value | escape }}" class="swatch-element color {{ value | handle }}">
+          <input
+            id="option-{{ value }}-{{ forloop.index0 }}"
+            type="radio"
+            name="{{ option.name }}"
+            value="{{ value | escape }}"
+            data-single-option-selector
+            data-index="option{{ option.position }}"
+            {% if option.selected_value == value %}checked="checked"{% endif %}>
+          <label class="variant__button-label--color" for="option-{{ value }}-{{ forloop.index0 }}">
+            <span style="background-color: {{ value | split: ' ' | last | handle }}; background-image: url({{ value | handle | append: '.' | append: file_extension | asset_url }})"></span>
+          </label>
+        </div>
+      {% endfor %}
+    </div>
+  </fieldset>
+</div>

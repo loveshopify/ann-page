@@ -1,0 +1,199 @@
+<!-- /sections/index-text-row.liquid -->
+
+{%- assign text_alignment = section.settings.text_alignment -%}
+{%- assign bg_color = section.settings.bg_color -%}
+{%- assign text_color = section.settings.text_color -%}
+
+{%- case section.blocks.size -%}
+  {%- when 1 -%}
+    {%- assign grid_width_large = 'large-up--one-half large-up--push-one-quarter clear' -%}
+    {%- assign grid_width_medium = 'medium--one-half medium--push-one-quarter clear' -%}
+    {%- assign grid_width_small = 'small--one-whole' -%}
+  {%- when 2 -%}
+    {%- assign grid_width_large = 'large-up--one-half' -%}
+    {%- assign grid_width_medium = 'medium--one-half' -%}
+    {%- assign grid_width_small = 'small--one-whole' -%}
+  {%- when 3 -%}
+    {%- assign grid_width_large = 'large-up--one-third' -%}
+    {%- assign grid_width_medium = 'medium--one-third' -%}
+    {%- assign grid_width_small = 'small--one-whole' -%}
+  {%- else -%}
+    {%- assign grid_width_large = 'large-up--one-quarter' -%}
+    {%- assign grid_width_medium = 'medium--one-half' -%}
+    {%- assign grid_width_small = 'small--one-whole' -%}
+{%- endcase -%}
+
+<div class="text-row" data-section-id="{{ section.id }}" data-section-type="text-row" data-text-alignment="{{ text_alignment }}" style="background-color: {{ bg_color }};">
+  <div class="container {{ section.settings.icon_alignment }} {{ section.settings.icon_size }}">
+    <div class="grid grid--uniform">
+
+      {%- if section.blocks.size -%}
+        {%- for block in section.blocks -%}
+          {%- assign icon_words = block.settings.icon | split: ' ' -%}
+          {%- capture icon -%}{%- for word in icon_words -%}{%- unless forloop.index == 1 -%}-{%- endunless -%}{{ word | downcase }}{%- endfor -%}{%- endcapture -%}
+            <div class="grid__item {{ grid_width_small }} {{ grid_width_medium }} {{ grid_width_large }}" {{ block.shopify_attributes }}>
+              <div class="icon__column icon__column--{{ block.id }} {{ block.settings.icon_alignment }} {{ block.settings.icon_size }}">
+                <style>
+                  .icon__column--{{ block.id }} .icon__column__icon svg g {
+                    stroke: {{ block.settings.icon_color }};
+                  }
+                </style>
+                <div class="icon__column__icon"
+                  data-aos="svg-dash"
+                  data-aos-delay="500">
+                    {% include block.settings.icon_name %}
+                  </div>
+                <div class="icon__column__text" style="color: {{ text_color }};">
+                  {%- if  block.settings.title != blank -%}
+                    <h5>{{ block.settings.title }}</h5>
+                  {%- endif -%}
+
+                  {%- if block.settings.text != blank -%}
+                    <p>{{ block.settings.text }}</p>
+                  {%- endif -%}
+                </div>
+              </div>
+            </div>
+        {%- endfor -%}
+      {%- endif -%}
+
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Text row with icons",
+  "max_blocks": 4,
+  "settings": [
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "default": "left",
+      "options": [
+        { "label": "Left", "value": "left" },
+        { "label": "Center", "value": "center" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "icon_size",
+      "label": "Icon size",
+      "default": "icon--small",
+      "options": [
+        { "value": "icon--small", "label": "Small" },
+        { "value": "icon--large", "label": "Large" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "icon_alignment",
+      "label": "Icon placement",
+      "default": "icon--top",
+      "options": [
+        { "value": "icon--top", "label": "Top" },
+        { "value": "icon--left", "label": "Left" }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#fafafa"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#545454"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text-item",
+      "name": "Icon column",
+      "settings": [
+      {
+          "type": "select",
+          "id": "icon_name",
+          "label": "Icon",
+          "default": "icon-award",
+          "options": [
+            { "value": "icon-award", "label": "Award" },
+            { "value": "icon-basket-like", "label": "Basket like" },
+            { "value": "icon-basket-return", "label": "Basket return" },
+            { "value": "icon-cart-check", "label": "Cart check" },
+            { "value": "icon-cart-message", "label": "Cart message" },
+            { "value": "icon-chat", "label": "Chat" },
+            { "value": "icon-dollar", "label": "Dollar" },
+            { "value": "icon-email", "label": "Email" },
+            { "value": "icon-lock-card", "label": "Lock card" },
+            { "value": "icon-lock-shield", "label": "Lock shield" },
+            { "value": "icon-lock-window", "label": "Lock window" },
+            { "value": "icon-payment", "label": "Payment" },
+            { "value": "icon-phone", "label": "Phone" },
+            { "value": "icon-rating", "label": "Rating" },
+            { "value": "icon-send", "label": "Send" },
+            { "value": "icon-shipment-world", "label": "Shipment world" },
+            { "value": "icon-shipment", "label": "Shipment" },
+            { "value": "icon-store", "label": "Store" },
+            { "value": "icon-support-headphones", "label": "Support headphones" },
+            { "value": "icon-truck", "label": "Truck" }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "icon_color",
+          "label": "Icon color",
+          "default": "#AAAAAA"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Title"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Share details about your shipping policies, item returns, or customer service."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Text row with icons",
+      "category": "Text",
+      "blocks": [
+        {
+          "type": "text-item",
+          "settings": {
+            "title": "Secure transactons",
+            "icon_name": "icon-lock-card",
+            "text": "Transactions are handled with bank-grade security"
+          }
+        },
+        {
+          "type": "text-item",
+          "settings": {
+            "title": "Simple checkout",
+            "icon_name": "icon-basket-like",
+            "text": "Our secure checkout is quick and easy to use."
+          }
+        },
+        {
+          "type": "text-item",
+          "settings": {
+            "title": "Get in touch",
+            "icon_name": "icon-chat",
+            "text": "Have questions? Get in touch with us at any time."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

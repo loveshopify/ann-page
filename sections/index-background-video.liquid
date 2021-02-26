@@ -1,0 +1,212 @@
+ <!-- /sections/index-video-background.liquid -->
+
+{% assign section_height = section.settings.video_height | plus: 0 %}
+{% assign section_height_mobile = section.settings.video_height_mobile| plus: 0 %}
+{%- assign transparency_class = '' -%}
+{%- if section.settings.transparent-%}
+  {%- assign transparency_class = 'hero__content--transparent' -%}
+{%- endif -%}
+
+<section class="index-video video-parent-section {{ section.settings.height }}" data-section-id="{{ section.id }}" data-section-type="featured-background-video">
+  <div class="video-wrapper {{ section.settings.text_color }}">
+    <div class="hero__content__wrapper {{ section.settings.flex_align }} {{ transparency_class }}">
+      <div class="hero__content">
+        {% unless section.settings.title == '' %}
+          <h1 class="hero__title"
+            data-aos="fade-up"
+            data-aos-duration="500">
+            {{ section.settings.title | escape }}
+          </h1>
+        {% endunless %}
+        {% unless section.settings.main_subheading == '' %}
+          <p class="hero__description h5--body"
+            data-aos="fade-up"
+            data-aos-duration="600"
+            data-aos-delay="100">
+            {{ section.settings.main_subheading }}
+          </p>
+        {% endunless %}
+        {% unless section.settings.btn_text == '' %}
+          <a class="hero__btn btn btn--large btn--secondary caps"
+            href="{{ section.settings.btn_link }}"
+            data-aos="fade-up"
+            data-aos-duration="700"
+            data-aos-delay="200">
+            {{ section.settings.btn_text | escape }}
+          </a>
+        {% endunless %}
+      </div>
+    </div>
+
+    <!-- Video -->
+    <div class="video video--{{ section.id }} {{ section.settings.video_height }}" id="youtube-{{ section.id }}-container">
+      <div class="video__background{% if section.settings.image == blank %} placeholder-bg{% endif %}">
+        {%- if section.settings.image -%}
+          {%- assign img_object = section.settings.image -%}
+          {%- assign img_small = section.settings.image | img_url: '18x' -%}
+          {%- assign img_api = section.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+        {%- else -%}
+          {%- assign img_object = 'blank.svg' | asset_url -%}
+          {%- assign img_small =  'blank.svg' | asset_url -%}
+          {%- assign img_api = 'blank.svg' | asset_url -%}
+        {%- endif -%}
+        <div class="video__background-image lazyload"
+          data-bgset="{{ img_api }}"
+          data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048, 2450, 2700, 3000, 3350, 3750, 4100]"
+          data-aspectratio="{{  section.settings.image.aspect_ratio }}"
+          data-sizes="auto">
+        </div>
+      </div>
+      <div class="video__iframe" id="video-{{ section.id }}"
+        data-video-type="{{ section.settings.hero_video_link.type }}"
+        data-video-id="{{ section.settings.hero_video_link.id }}">
+
+          <div data-youtube-wrapper id="youtube-{{ section.id }}" data-enable-sound="{{ section.settings.enable_sound }}"></div>
+        </div>
+      {% unless section.settings.overlay_color == blank %}
+        {% assign overlay_opacity = section.settings.overlay_opacity | times: 0.01 %}
+        <div class="image-overlay" style="background-color:{{ section.settings.overlay_color }} !important; opacity:{{ overlay_opacity }};"></div>
+      {% endunless %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Background video",
+  "class": "featured-video-section section-fullscreen",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Video"
+    },
+    {
+      "type": "video_url",
+      "id": "hero_video_link",
+      "label": "Video link",
+      "default": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+      "accept": ["youtube", "vimeo"],
+      "info": "YouTube and Vimeo links only"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sound",
+      "label": "Enable sound",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Poster image"
+    },
+    {
+      "type": "select",
+      "id": "height",
+      "label": "Video height",
+      "default": "screen-height-two-thirds",
+      "options": [
+        { "value": "screen-height-full", "label": "Full screen height"},
+        { "value": "screen-height-three-quarters", "label": "3/4 of screen"},
+        { "value": "screen-height-two-thirds", "label": "2/3 of screen"},
+        { "value": "screen-height-one-half", "label": "1/2 of screen"},
+        { "value": "screen-height-one-third", "label": "1/3 of screen"},
+        { "value": "seven-fifty-height-hero", "label": "750px" },
+        { "value": "sixty-fifty-height-hero", "label": "650px" },
+        { "value": "five-fifty-height-hero ", "label": "550px" },
+        { "value": "four-fifty-height-hero", "label": "450px" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Overlay"
+    },
+    {
+      "type":  "range",
+      "id":    "overlay_opacity",
+      "label": "Opacity",
+      "info":  "Increase contrast for legible text.",
+      "min":    0,
+      "max":    90,
+      "step":   5,
+      "unit":   "%",
+      "default":15
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#fff"
+    },
+    {
+      "type": "header",
+      "content": "Text"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Background video"
+    },
+    {
+      "type": "textarea",
+      "id": "main_subheading",
+      "label": "Subheading",
+      "default": "This subheading helps you provide some more detail to the title above."
+    },
+    {
+      "type": "select",
+      "id": "flex_align",
+      "label": "Text alignment",
+      "default": "align--middle-center",
+      "options": [
+        { "value": "align--top-left", "label": "Top left"},
+        { "value": "align--top-center", "label": "Top center"},
+        { "value": "align--top-right", "label": "Top right"},
+        { "value": "align--middle-left", "label": "Middle left"},
+        { "value": "align--middle-center", "label": "Absolute center"},
+        { "value": "align--middle-right", "label": "Middle right"},
+        { "value": "align--bottom-left", "label": "Bottom left"},
+        { "value": "align--bottom-center", "label": "Bottom center"},
+        { "value": "align--bottom-right", "label": "Bottom right"}
+      ]
+    },
+    {
+      "type": "select",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "text-dark",
+      "options": [
+        { "value": "text-light", "label": "White"},
+        { "value": "text-dark", "label": "Dark"}
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "transparent",
+      "label": "Use transparent background",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "text",
+      "id": "btn_text",
+      "label": "Button label",
+      "default": "Welcome"
+    },
+    {
+      "type": "url",
+      "id": "btn_link",
+      "label": "Button link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Background video",
+      "category": "video"
+    }
+  ]
+}
+{% endschema %}

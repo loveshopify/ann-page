@@ -1,0 +1,241 @@
+<!-- /sections/index-image-with-text.liquid -->
+{%- assign button_colors = section.settings.button_colors | default: '#fff' -%}
+{%- assign button_text = '#fff' -%}
+{%- assign brightness = button_colors | color_brightness -%}
+
+{%- if brightness > 127 -%}
+  {%- assign button_text = settings.text_color -%}
+{%- endif -%}
+
+{%- if section.settings.image -%}
+  {%- assign img_object = section.settings.image -%}
+  {%- assign img_api = section.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+{%- endif -%}
+
+<style>
+  .colors-{{section.id}} {
+    background-color: {{ section.settings.background | default: "#F7F9FA" }};
+    color: {{ section.settings.color  | default: "#282C2E" }};
+  }
+
+  .colors-{{section.id}} .image-with-text__button { color: {{ button_colors }}; border-color: {{ button_colors }}; }
+  .colors-{{section.id}} .image-with-text__button .icon { fill: {{ button_text }}; }
+  .colors-{{section.id}} .image-with-text__button--clear .icon { fill: #fff; }
+  .colors-{{section.id}} .image-with-text__button--filled { color: {{ button_text }}; border-color: {{ button_colors }}; background-color: {{ button_colors }}; }
+  .colors-{{section.id}} .image-with-text__button--filled { color: {{ button_text }}; border-color: {{ button_colors }}; background-color: {{ button_colors }}; }
+  .colors-{{section.id}} .image-with-text__button:hover { color: #fff; border-color: {{ settings.link_hover_color }}; background: {{ settings.link_hover_color }}; }
+  .colors-{{section.id}} .image-with-text__button:hover .icon { fill: #fff; }
+</style>
+
+<section class="index-double js-overflow-container image-with-text-section colors-{{section.id}} {{ section.settings.height }} {% if section.settings.image == blank %}image-with-text-section{% endif %}" data-section-id="{{ section.id }}" data-section-type="image-with-text" id="FeaturedImage-{{ section.id }}">
+  <div class="image-with-text-wrapper js-overflow-container {% if section.settings.title == blank and section.settings.content %}image-with-text--no-text{% endif %} image-with-text-wrapper--{{ section.settings.image_alignment }}">
+    {% unless section.settings.title == blank and section.settings.content %}
+    <div class="image-with-text__text js-overflow-container">
+      <div class="image-with-text__inner js-overflow-content">
+        {% unless section.settings.title == '' %}
+          <h2 class="video__title" data-aos="fade-up" data-aos-duration="500">{{ section.settings.title | escape }}</h2>
+        {% endunless %}
+        {% unless section.settings.content == '' %}
+          <div class="video__description" data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">{{ section.settings.content }}</div>
+        {% endunless %}
+      </div>
+    </div>
+    {% endunless %}
+
+    <div class="image-with-text__image">
+      {% if section.settings.image %}
+        {% if section.settings.height == 'image-height' %}
+          {%- assign img_object = section.settings.image -%}
+          {%- assign img_small = section.settings.image | img_url: '18x' -%}
+          {%- assign img_api = section.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+      
+          <img class="lazyload"
+            src="{{ img_small }}"
+            data-src="{{ img_api }}"
+            data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+            data-aspectratio="{{ section.settings.image.aspect_ratio }}"
+            data-sizes="auto"
+            alt="{{ section.settings.image.alt | escape }}">
+          <noscript>
+            <img src="{{ section.settings.image | img_url: '2048x' }}" alt="{{ section.settings.image.alt }}">
+          </noscript>
+        {% else %}
+          <div class="image-with-text__image-img lazyload"
+            data-bgset="{{ img_api }}"
+            data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048, 2450, 2700, 3000, 3350, 3750, 4100]"
+            data-aspectratio="{{  section.settings.image.aspect_ratio }}"
+            data-sizes="auto">
+          </div>
+          <noscript>
+            <div class="image-with-text__image-img no-js-image"
+              style="background-image:url('{{ img_object | img_url: '1080x' }}'); background-size: cover; background-position: center center; background-repeat: no-repeat;">
+            </div>
+          </noscript>
+        {% endif %}
+      {% else %}
+        <div class="image-with-text__image-img">
+          {{ 'lifestyle-1' | placeholder_svg_tag }}
+        </div>
+      {% endif %}
+
+      {% if section.settings.button_text != blank %}
+        {% assign button_text = section.settings.button_text %}
+
+          {% if section.settings.video_link != blank %}
+            {%- if section.settings.video_link.type == 'youtube' -%}
+              {% capture video_link %}https://www.youtube.com/watch?v={{ section.settings.video_link.id }}{% endcapture %}
+            {%- elsif section.settings.video_link.type == 'vimeo' -%}
+              {% capture video_link %}https://vimeo.com/{{ section.settings.video_link.id }}{% endcapture %}
+            {%- endif -%}
+            <a href="{{ video_link }}" class="image-with-text__button image-with-text__button--{{ section.settings.button_type }} image__video__play" data-aos="fade-up" data-aos-duration="700" data-aos-delay="500"><span>{{ button_text }}</span>{% include 'icon-play' %}</a>
+          {% elsif section.settings.button_link != blank %}
+            <a href="{{ section.settings.button_link }}" class="image-with-text__button image-with-text__button--{{ section.settings.button_type }}" data-aos="fade-up" data-aos-duration="700" data-aos-delay="500"><span>{{ button_text }}</span></a>
+          {% else %}
+            <a href="#!" class="image-with-text__button image-with-text__button--{{ section.settings.button_type }}" data-aos="fade-up" data-aos-duration="700" data-aos-delay="500"><span>{{ button_text }}</span></a>
+          {% endif %}
+        </a>
+      {% endif %}
+
+      {% assign overlay_opacity = section.settings.overlay_opacity | times: 0.01 %}
+      <div class="image-overlay" style="background-color:{{ section.settings.overlay_color }} !important; opacity:{{ overlay_opacity }};"></div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Image with text",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Text"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Image with text"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "Content",
+      "default": "<p>This area is used to showcase a product, collection, or your brand.</p>"
+    },
+    {
+      "type": "color",
+      "id": "color",
+      "label": "Text",
+      "default": "#282C2E"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background",
+      "default": "#F7F9FA"
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "select",
+      "id": "height",
+      "label": "Section height",
+      "default": "screen-height-one-half",
+      "options": [
+        { "value": "screen-height-full", "label": "Full screen height"},
+        { "value": "screen-height-three-quarters", "label": "3/4 of screen"},
+        { "value": "screen-height-two-thirds", "label": "2/3 of screen"},
+        { "value": "screen-height-one-half", "label": "1/2 of screen"},
+        { "value": "screen-height-one-third", "label": "1/3 of screen"},
+        { "value": "seven-fifty-height-hero", "label": "750px" },
+        { "value": "sixty-fifty-height-hero", "label": "650px" },
+        { "value": "five-fifty-height-hero", "label": "550px" },
+        { "value": "four-fifty-height-hero", "label": "450px" },
+        { "value": "image-height", "label": "Image height" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "image_alignment",
+      "label": "Image alignment",
+      "default": "natural",
+      "options": [
+        { "value": "reverse", "label": "Left"},
+        { "value": "natural", "label": "Right" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Overlay"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Opacity",
+      "info": "Increase contrast for legible text.",
+      "unit": "%",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "default":15
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#fff"
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Label",
+      "default": "Click here"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Link"
+    },
+    {
+      "type": "video_url",
+      "id": "video_link",
+      "label": "Video link",
+      "accept": ["youtube", "vimeo"],
+      "info": "Video links from YouTube or Vimeo accepted."
+    },
+    {
+      "type": "select",
+      "id": "button_type",
+      "label": "Type",
+      "default": "filled",
+      "options": [
+        { "value": "filled", "label": "Filled"},
+        { "value": "clear", "label": "Clear"}
+      ]
+    },
+    {
+      "type": "color",
+      "id": "button_colors",
+      "label": "Color",
+      "default": "#FFF"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image with text",
+      "category": "Image"
+    }
+  ]
+}
+{% endschema %}

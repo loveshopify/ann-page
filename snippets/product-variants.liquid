@@ -1,0 +1,39 @@
+{% for option in product.options_with_values %}
+  {%- assign downcased_option = option.name | downcase -%}
+  {%- assign is_color = false -%}
+  {%- if downcased_option contains 'color' or downcased_option contains 'colour' -%}
+    {%- assign is_color = true -%}
+  {%- endif -%}
+  
+  {%- if is_color and enable_swatches -%}
+    {%- include 'product-option--color-swatch' -%}
+  {%- else -%}
+    <div class="selector-wrapper js" data-option="option{{ option.position }}">
+      <label class="variant-label" for="SingleOptionSelector-{{ forloop.index0 }}-{{product.id}}">
+        {{ option.name }}
+      </label>
+
+      <fieldset
+        id="SingleOptionSelector-{{ forloop.index0 }}-{{product.id}}"
+        class="variant-input-wrap"
+        data-index="option{{ option.position }}">
+        {% for value in option.values %}
+          <div class="variant-field">
+            <input
+              id="option-{{ value }}-{{ forloop.index0 }}"
+              class="visually-hidden variant-input"
+              type="radio"
+              name="{{ option.name }}"
+              value="{{ value | escape }}"
+              data-single-option-selector
+              data-index="option{{ option.position }}"
+              {% if option.selected_value == value %}checked="checked"{% endif %}>
+            <label class="variant__button-label" for="option-{{ value }}-{{ forloop.index0 }}">
+              {{ value }}
+            </label>
+          </div>
+        {% endfor %}
+      </fieldset>
+    </div>
+  {%- endif -%}
+{% endfor %}

@@ -1,0 +1,478 @@
+<!-- /sections/header.liquid -->
+
+{%- assign logoImageWidth = section.settings.logo_image_width -%}
+{%- if section.settings.menu_primary -%}
+  {%- assign main_menu_linklist = section.settings.menu_primary-%}
+{%- else -%}
+  {%- assign main_menu_linklist = 'main-menu' -%}
+{%- endif -%}
+
+{%- assign header_overlay = false -%}
+{%- if section.settings.header_transparent_home and template == 'index' -%}
+  {%- assign header_overlay = true -%}
+{%- elsif section.settings.header_transparent_collection and template == 'collection' and collection.image -%}
+  {%- assign header_overlay = true -%}
+{%- endif -%}
+
+<header class="site-header header--{{ section.settings.header_style }} header__wrapper{% if header_overlay %} header--transparent{% endif %}" id="header" data-section-id="{{ section.id }}" data-section-type="header" data-overlay="{{ header_overlay }}">
+  {% if logoImageWidth > 0 %}
+    <style>
+      #logo a img { width: {{ logoImageWidth }}px; }
+    </style>
+  {% endif %}
+
+  <!-- PROMO -->
+  {% if section.settings.message %}
+      <style>
+      .promo {
+        background-color: {{ section.settings.color_bg }};
+      }
+      .promo strong, .promo span {
+        color: {{ section.settings.color_text }};
+      }
+    </style>
+    <aside class="promo">
+      {% if section.settings.message_link %}
+      <a class = "promo--link" href = "{{ section.settings.message_link }}">
+      {% endif %}
+
+      {% if section.settings.message_text  %}
+        <strong>{{ section.settings.message_text }}</strong>
+      {% endif %}
+
+      {% if section.settings.message_text != blank and section.settings.message_detail != blank %}
+        <span class="promo__break">|</span>
+      {% endif %}
+
+      {% if section.settings.message_detail != blank %}
+        <span>{{ section.settings.message_detail }}</span>
+      {% endif %}
+
+      {% if section.settings.message_link %}
+      </a>
+      {% endif %}
+    </aside>
+  {% endif %}
+
+  <div class="header__content">
+    <div class="wrap">
+      {%- if section.settings.show_header_search -%}
+        {%- include 'search' -%}
+      {%- endif -%}
+      <!-- SEARCH, CURRENCY, ACCOUNT, CART -->
+      <div class="header-content">
+        <a href="javascript:void(0)" class="medium-up--hide toggle-menus">
+          <div class="toggle-menus-lines">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <span class="visually-hidden">{{ 'layout.header.menu' | t }}</span>
+        </a>
+
+        {% if section.settings.show_header_social %}
+          <nav class="header__social">
+            {% include 'social' %}
+          </nav>
+        {% endif %}
+
+        <!-- LOGO -->
+        <h1 class="logo__wrapper" id="logo" data-aos="fade-down" data-aos-duration="1000" data-aos-delay="300">
+          <a href="/">
+            {% if section.settings.logo_image %}
+              {% assign image = section.settings.logo_image %}
+              {% assign img_url = image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' %}
+              <img class="lazyload logo logo--default"
+                src="{{ image | img_url: '400x' }}"
+                data-src="{{ img_url }}"
+                data-widths="[180, 360, 540, 720, 900, 1080, 1296]"
+                data-aspectratio="{{ image.aspect_ratio }}"
+                data-sizes="auto"
+                data-parent-fit="contain"
+                alt="{{ shop.name | escape }}"/>
+
+                <noscript>
+                  <img class="no-js-image" src="{{ image | img_url: '400x' }}" alt="{{ shop.name | escape }}"/>
+                </noscript>
+                {% if header_overlay and section.settings.transparent_logo != blank %}
+                  {% capture image_size %}{{ section.settings.logo_image_width }}x{% endcapture %}
+                  <img src="{{ section.settings.transparent_logo | img_url: image_size }}"
+                       class="logo logo--transparent"
+                       srcset="{{ section.settings.transparent_logo | img_url: image_size }} 1x, {{ section.settings.transparent_logo | img_url: image_size, scale: 2 }} 2x"
+                       alt="{{ section.settings.transparent_logo.alt | default: shop.name }}">
+                {% endif %}
+            {% else %}
+              <span>{{ shop.name | escape }}</span>
+            {% endif %}
+          </a>
+        </h1>
+
+        <div class="user-links">
+          {% if shop.customer_accounts_enabled and section.settings.show_account %}
+            <a href="/account" class="header__account__link" id="account-link">
+              {% include 'icon-account' %}
+              <span class="visually-hidden">{{ 'customer.account.title' | t }}</span>
+            </a>
+          {% endif %}
+          {% if section.settings.show_header_search %}
+            <a href="javascript:void(0)" id="SearchToggle" title="{{ 'general.search.placeholder' | t }}">
+              <span class="search-toggle">
+                <span class="visually-hidden">{{ 'general.search.submit' | t }}</span>
+                <span class="oi" data-glyph="magnifying-glass"></span>
+              </span>
+            </a>
+          {% endif %}
+          <a href="/cart/" class="header__cart__wrapper" id="CartButton" title="{{ 'cart.general.title' | t }}">
+            <span class="header__cart__icon__wrapper">
+              <span class="visually-hidden">{{ 'layout.cart.title' | t }}</span>
+              <span class="oi header__cart__icon" data-glyph="cart"></span>
+              <span
+                class="cart-count-js header__cart__count"
+                {% if cart.item_count == 0 %}
+                  style="display: none;"
+                {% endif %}>
+                {{ cart.item_count }}
+              </span>
+            </span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- MAIN NAV -->
+    <section id="NavMenus" class="navigation__wrapper" role="navigation">
+
+      <nav class="site-nav nav__links">
+        <ul class="main-menu unstyled" role="navigation" aria-label="primary">
+        {%- for link in linklists[main_menu_linklist].links -%}
+          {%- assign toplevel = true -%}
+          {% include 'nav-item', version: 'desktop', seed: forloop.index %}
+        {%- endfor -%}
+
+        {% if shop.customer_accounts_enabled and section.settings.show_account %}
+          {% if customer %}
+            <li class="nav__account medium-up--hide"><a href="/account">{{ 'customer.account.title' | t }}</a></li>
+            <li class="nav__account medium-up--hide">{{ 'layout.customer.log_out' | t | customer_logout_link }}</li>
+          {% else %}
+            <li class="nav__account medium-up--hide">{{ 'layout.customer.log_in' | t | customer_login_link }}</li>
+            <li class="nav__account medium-up--hide">{{ 'layout.customer.create_account' | t | customer_register_link }}</li>
+          {% endif %}
+        {% endif %}
+        </ul>
+      </nav>
+
+      {% if section.settings.show_header_social %}
+        <div class="header__social--mobile medium-up--hide">
+          {% include 'social' %}
+        </div>
+      {% endif %}
+
+      {%- if settings.show_multiple_currencies -%}
+        <div class="header__currency">
+          {%- include 'currency-picker' -%}
+        </div>
+      {%- endif -%}
+
+    </section>
+  </div>
+</header>
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "name": {{ shop.name | json }},
+  {% if section.settings.logo_image %}
+    {% assign image_size = section.settings.logo_image.width | append:'x' %}
+    "logo": {{ section.settings.logo_image | img_url: image_size | prepend: "https:" | json }},
+  {% endif %}
+  "sameAs": [
+    {{ settings.instagram_link | json }},
+    {{ settings.facebook_link | json }},
+    {{ settings.twitter_link | json }},
+    {{ settings.youtube_link | json }},
+    {{ settings.vimeo_link | json }},
+    {{ settings.pinterest_link | json }},
+    {{ settings.tumblr_link | json }}
+  ],
+  "url": {{ shop.url | append: page.url | json }}
+}
+</script>
+
+{% if template.name == 'index' %}
+  {% assign potential_action_target = shop.url | append: "/search?q={search_term_string}" %}
+  <script type="application/ld+json">
+    {
+      "@context": "http://schema.org",
+      "@type": "WebSite",
+      "name": {{ shop.name | json }},
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {{ potential_action_target | json }},
+        "query-input": "required name=search_term_string"
+      },
+      "url": {{ shop.url | append: page.url | json }}
+    }
+  </script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_image",
+      "label": "Logo image",
+      "info": "300px wide recommended"
+    },
+    {
+      "type": "range",
+      "id": "logo_image_width",
+      "label": "Logo width (in pixels)",
+      "min": 50,
+      "max": 400,
+      "step": 10,
+      "unit": "px",
+      "info": "To support Retina displays, upload your photo at twice the resolution you would like it to display at, and use this field to adjust it's size on screen.",
+      "default": 200
+    },
+    {
+      "type": "select",
+      "id": "header_style",
+      "label": "Header style",
+      "default": "normal",
+      "options": [
+        { "label": "Normal", "value": "normal" },
+        { "label": "Sticky", "value": "sticky" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Transparent header"
+    },
+    {
+      "type": "checkbox",
+      "id": "header_transparent_home",
+      "label": "Enable on homepage",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "header_transparent_collection",
+      "label": "Enable on collection",
+      "info": "Shown if collection image is set",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "transparent_logo",
+      "label": "Alternate logo image",
+      "info": "Use an alternate color logo to match your transparent header"
+    },
+    {
+      "type": "header",
+      "content": "Social media"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_header_social",
+      "label": "Show social links",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Search"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_header_search",
+      "label": "Show search",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Accout"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_account",
+      "label": "Show account link",
+      "default": true,
+      "info": "Customer accounts must be enabled in your Shopify checkout settings"
+    },
+    {
+      "type": "header",
+      "content": "Announcement bar"
+    },
+    {
+      "type": "checkbox",
+      "id": "message",
+      "label": "Show announcement",
+      "info": "Not visible on mobile"
+    },
+    {
+      "type": "text",
+      "id": "message_text",
+      "label": "Text",
+      "default":"Announce something here"
+    },
+    {
+      "type": "text",
+      "id": "message_detail",
+      "label": "Details",
+      "default":"And then add some details here"
+    },
+    {
+      "type": "url",
+      "id": "message_link",
+      "label": "Link"
+    },
+    {
+      "type": "color",
+      "id": "color_bg",
+      "label": "Bar",
+      "default": "#fff"
+    },
+    {
+      "type": "color",
+      "id": "color_text",
+      "label": "Text",
+      "default": "#3D3146"
+    },
+    {
+      "type": "header",
+      "content": "Navigation"
+    },
+    {
+      "type": "link_list",
+      "id": "menu_primary",
+      "label": "Primary menu",
+      "default": "main-menu"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Mega menu",
+      "type": "megamenu",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Submenu item",
+          "info": "This submenu will appear as a megamenu."
+        },
+        {
+          "type": "header",
+          "content": "Image 1"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_1",
+          "label": "Image",
+          "info": "Recommended size: 500 x 800 px"
+        },
+        {
+          "type": "text",
+          "id": "title_1",
+          "label": "Heading"
+        },
+        {
+          "type": "text",
+          "id": "button_1",
+          "label": "Button"
+        },
+        {
+          "type": "url",
+          "id": "link_1",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Image 2"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_2",
+          "label": "Image",
+          "info": "Recommended size: 500 x 800 px"
+        },
+        {
+          "type": "text",
+          "id": "title_2",
+          "label": "Heading"
+        },
+        {
+          "type": "text",
+          "id": "button_2",
+          "label": "Button"
+        },
+        {
+          "type": "url",
+          "id": "link_2",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Image 3"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_3",
+          "label": "Image",
+          "info": "Recommended size: 500 x 800 px"
+        },
+        {
+          "type": "text",
+          "id": "title_3",
+          "label": "Heading"
+        },
+        {
+          "type": "text",
+          "id": "button_3",
+          "label": "Button"
+        },
+        {
+          "type": "url",
+          "id": "link_3",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Image 4"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_4",
+          "label": "Image",
+          "info": "Recommended size: 500 x 800 px"
+        },
+        {
+          "type": "text",
+          "id": "title_4",
+          "label": "Heading"
+        },
+        {
+          "type": "text",
+          "id": "button_4",
+          "label": "Button"
+        },
+        {
+          "type": "url",
+          "id": "link_4",
+          "label": "Link"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

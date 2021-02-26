@@ -1,0 +1,13 @@
+<!-- /snippets/article-column-item.liquid -->
+
+<a href="{{ article.url }}" class="article__column">
+  {% if article.image %}
+    <div class="article__column__image__wrapper">
+      <div class="article__column__image lazyload"  data-bgset="{% include 'bgset', image: article.image %}"></div>
+    </div>
+  {% endif %}
+  <div class="article__column__contents">
+    <h4 class="h5 article__column__title">{{ article.title }}</h4>
+    <span class="meta--light">{{ article.author }}</span>
+  </div>
+</a>

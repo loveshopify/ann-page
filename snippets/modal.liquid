@@ -1,0 +1,74 @@
+{%- assign promo_subtitle = settings.promo_modal_subtitle -%}
+{%- assign promo_title = settings.promo_modal_title -%}
+{%- assign promo_text = settings.promo_modal_richtext -%}
+{%- assign promo_button_text = settings.promo_button_text -%}
+{%- assign promo_bg_color = settings.promo_bg_color -%}
+{%- assign promo_text_color = settings.promo_text_color | default: '#545454' -%}
+
+{%- if promo_button_text == blank -%}
+  {%- assign promo_button_text = 'general.newsletter_form.submit' | t -%}
+{%- endif -%}
+
+<style>
+  .modal--newsletter { background-color: {{ promo_bg_color }}; }
+  .modal--newsletter .image-with-text__image { border-color: {{ promo_bg_color }}; }
+  {%- if promo_text_color == 'light' -%}
+    .modal--newsletter,
+    .modal--newsletter .input-group.newsletter-form input { color: #fff; }
+  {%- endif -%}
+</style>
+
+<div class="modal__overlay modal__overlay--newsletter" id="PromoModal" data-dev-mode="{{ settings.promo_dev_mode }}">
+  <section class="modal__outer">
+    <div class="modal__wrapper">
+      <div class="modal--newsletter">
+        <div class="image-with-text-section">
+          <div class="image-with-text-wrapper image-with-text-wrapper--reverse {% if settings.promo_image == blank %}image-with-text-wrapper--no-image{% endif %}">
+            <div class="image-with-text__text">
+              <div class="image-with-text__inner">
+                {% unless promo_subtitle == '' %}<p class="modal__subtitle">{{ promo_subtitle | escape }}</p>{% endunless %}
+                {% unless promo_title == '' %}<h2 class="modal__title">{{ promo_title | escape }}</h2>{% endunless %}
+                {% unless promo_text == '' %}<div class="modal__description rte">{{ promo_text }}</div>{% endunless %}
+                {% form 'customer' %}
+                  {% if form.posted_successfully? %}
+                    <p><em>{{ 'general.newsletter_form.thank_you' | t }}</em></p>
+                  {% elsif form.errors %}
+                    {% for field in form.errors %}
+                      <p><em>{{ field }} - {{ form.errors.messages[field] }}</em></p>
+                    {% endfor %}
+                  {% endif %}
+
+                  <input type="hidden" name="contact[accepts_marketing]" value="true">
+                  <div class="input-group newsletter-form">
+                    <input type="email" id="mail" class="input-group-field" aria-label="{{ 'general.newsletter_form.newsletter_email' | t }}" autocorrect="off" autocapitalize="off" name="contact[email]" />
+                    <span class="input-group-btn">
+                      <input type="submit" class="btn caps" name="subscribe" id="subscribe" value="{{ promo_button_text }}">
+                    </span>
+                  </div>
+                {% endform %}
+              </div>
+            </div>
+            {% if settings.promo_image %}
+              <div class="image-with-text__image">
+                {%- assign img_api = settings.promo_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+
+                <div class="image-with-text__image-img lazyload"
+                  data-bgset="{{ img_api }}"
+                  data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048, 2450, 2700, 3000, 3350, 3750, 4100]"
+                  data-aspectratio="{{  section.settings.image.aspect_ratio }}"
+                  data-sizes="auto">
+                </div>
+                <noscript>
+                  <div class="image-with-text__image-img no-js-image"
+                    style="background-image:url('{{ settings.promo_image | img_url: '1080x' }}'); background-size: cover; background-position: center center; background-repeat: no-repeat;">
+                  </div>
+                </noscript>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+        <span class="close">{% include 'icon-close-thin' %}</span>
+      </div>
+    </div>
+  </section>
+</div>

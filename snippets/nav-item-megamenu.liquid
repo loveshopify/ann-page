@@ -1,0 +1,65 @@
+{%- assign has_megamenu = false -%}
+{%- assign megamenu = '' -%}
+
+{%- if section.blocks.size > 0 -%}
+  {%- for block in section.blocks -%}
+    {%- assign link_title = link.title | escape | downcase -%}
+    {%- assign megamenu_title = block.settings.title | escape | downcase -%}
+
+    {%- if toplevel and link_title == megamenu_title -%}
+      {%- assign has_megamenu = true -%}
+
+      {%- capture megamenu -%}
+        {%- for i in (1..4) -%}
+          {%- assign image_key = i | prepend: 'image_' -%}
+          {%- assign heading_key = i | prepend: 'title_' -%}
+          {%- assign button_key = i | prepend: 'button_' -%}
+          {%- assign link_key = i | prepend: 'link_' -%}
+
+          {%- assign image = block.settings[image_key] -%}
+          {%- assign heading = block.settings[heading_key] -%}
+          {%- assign button = block.settings[button_key] -%}
+          {%- assign image_link = block.settings[link_key] -%}
+
+          {%- if image != blank or heading != blank or button != blank -%}
+            {%- assign child_count = child_count | plus: 1 -%}
+            <li>
+              <div class="megamenu__image">
+                {%- capture meganav_image -%}
+                  {%- unless image == blank -%}
+                    <div class="megamenu__image-bg lazyload lazypreload" data-bgset="{% include 'bgset', image: image %}">
+                      <span class="loader">
+                        <div class="loader-indeterminate"></div>
+                      </span>
+                    </div>
+                    <noscript>
+                      <div class="megamenu__image-bg no-js-image" style="background-image: url({{ image | img_url: '1024x' }});"></div>
+                    </noscript>
+                  {%- else -%}
+                    <div class="megamenu__image-bg svg-placeholder">{{ 'image' | placeholder_svg_tag }}</div>
+                  {%- endunless -%}
+                {%- endcapture -%}
+
+                {%- unless image_link == blank -%}
+                  <a href="{{ image_link }}" tabindex="{{ index | plus: 1 }}" class="megamenu__image-link">{{ meganav_image }}</a>
+                {%- else -%}
+                  {{ meganav_image }}
+                {%- endunless -%}
+
+
+                {%- unless heading == blank -%}
+                  <h3 class="megamenu__image-title"><a href="{% if image_link != blank %}{{ image_link }}{% else %}#{% endif %}" class="megamenu__image-title-link">{{ heading }}</a></h3>
+                {%- endunless -%}
+
+                {%- unless button == blank -%}
+                  <a {% if image_link != blank %} href="{{ image_link }}"{% endif %} class="megamenu__image-btn btn btn--white btn--large btn--secondary btn--neutral caps">{{ button }}</a>
+                {%- endunless -%}
+              </div>
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endcapture -%}
+    {%- endif -%}
+
+  {%- endfor -%}
+{%- endif -%}

@@ -1,0 +1,113 @@
+<!-- /templates/page.fullwidth.liquid -->
+<section class="page-fixtures">
+
+  <div class="fixtures-wr">
+    <div class="fixtures-custom">
+      <div class="fixtures-content">
+        <h2 class="h3" >The Ann Page Greeting Card Rack</h2>
+        <p>The Ann Page Greeting Card rack contains 48 front facing slots with a swivel base.  This spinner requires no tools to put together and looks stylish while holding a lot of inventory in a small space.  Included is the acrylic spinner topper and insert. Square base measures approx. 15" x 15" on the floor. </p>
+      </div>
+      <img class="image1" src="{{ 'img1.jpg' | asset_url }}" alt/>
+    </div>
+    <div class="fixtures-custom2">
+      <img class="image2" src="{{ 'img2.jpg' | asset_url }}" alt/>
+      <div class="fixtures-content">
+        <h2 class="h3" >12 Card Acrylic Rack</h2>
+        <p>Interested in having a 12 Card Acrylic Rack at your Cash Wrap to display specialty or holiday cards throughout the year? </p>
+        <p>Email me at <a style="font-weight: bold;" href="mailto:virginia@annpage.com">virginia@annpage.com</a> for details!</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+<style>
+  .page-fixtures{
+    max-width: 850px;
+    display: block;
+    margin: 0 auto;
+    padding: 0 20px;
+    margin-top: 50px;
+  }
+  .fixtures-wr{
+    display: inline-block;
+    width: 100%;
+  }
+  .fixtures-custom{
+  }
+  .fixtures-custom .fixtures-content{
+    display: inline-block;
+    width: 54%;
+    float: left;
+  }
+  .fixtures-custom img.image1{
+    display: block;
+    float: right;
+    max-height: 400px;
+    margin-right: 50px;
+  }
+  .fixtures-custom2{
+    display: inline-block;
+  }
+  .fixtures-custom2 .fixtures-content{
+    display: inline-block;
+    width: 50%;
+    vertical-align: bottom;
+    float: none;
+    padding-left: 40px;
+
+  }
+  .fixtures-custom2 img.image2{
+    display: inline-block;
+    max-width: 49%;
+    vertical-align: top;
+    margin-top: -60px;
+  }
+  @media only screen and (max-width: 670px) {
+    .fixtures-custom img.image1 {
+      margin-right: 15px;
+    }
+    .fixtures-custom2 img.image2 {
+      margin-top: -25px;
+    }
+
+  }
+  @media only screen and (max-width: 639px) {
+    .fixtures-custom .fixtures-content {
+      display: inline-block;
+      width: 100%;
+      float: none;
+    }
+    .fixtures-custom img.image1 {
+      display: block;
+      float: none;
+      max-height: 400px;
+      margin-right: 0;
+      margin: 15px auto;
+    }
+    .fixtures-custom2 img.image2 {
+      display: flex;
+      max-width: 100%;
+      vertical-align: top;
+      margin-top: 0;
+      order: 2;
+          height: auto;
+    width: 100%;
+    }
+    .fixtures-custom2 {
+      display: flex;
+      flex-direction: column;
+    }
+    .fixtures-custom2 .fixtures-content {
+      display: inline-block;
+      width: 100%;
+      vertical-align: bottom;
+      float: none;
+      padding-left: 0;
+      margin-bottom: 20px;
+      margin-top: 20px;
+      order:1;
+    }
+
+
+  }
+</style>

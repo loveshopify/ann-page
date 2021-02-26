@@ -1,0 +1,116 @@
+<!-- /sections/cart.liquid -->
+
+<div class="cart"  data-section-id="{{ section.id }}" data-section-type="cart">
+	{% if cart.item_count == 0 %}
+	  <div class="empty">
+	    <h2 class="gutter-top theme">{{ 'cart.general.title' | t }}</h2>
+	    <p class="gutter-bottom">{{ 'cart.general.empty' | t }}</p>
+	    <a href="/collections/" class="btn btn--large btn--secondary">{{ 'cart.general.continue_shopping' | t }}</a>
+	  </div>
+	{% else %}
+	  <h2 class="theme">{{ 'cart.general.title' | t }}</h2>
+	  <div class="cart-form-errors" data-form-errors style="display: none;"></div>
+
+		{% comment %}
+		  The following snippet is refreshed via ajax with
+			cart.ajax.liquid when the quantity is adjusted.
+		{% endcomment %}
+		<div data-cart-form-wrapper>
+			{%- include 'cart-form' -%}
+		</div>
+
+		<div data-cart-holder style="display:none"></div>
+		<div class="cart-section-options" data-cart-additional style="display:none">
+			{%- if section.settings.allow_tax_text -%}
+		      {%- if section.settings.custom_tax_text == '' -%}
+		        <p class="info__tax"><small>{{ 'cart.general.subtotal_note' | t }}</small></p>
+		      {%- else -%}
+		        <p class="info__tax"><small>{{ section.settings.custom_tax_text }}</small></p>
+		      {%- endif -%}
+		    {%- endif -%}
+
+			{%- if additional_checkout_buttons and section.settings.cart_show_additional_buttons -%}
+				<div class="additional-checkout-buttons">
+					<small class="additional-checkout">&mdash; {{ 'cart.general.or' | t }} &mdash;</small>
+					{{ content_for_additional_checkout_buttons }}
+				</div>
+			{%- endif -%}
+
+			<div class="cart-extra" data-section-type="cart-template">
+				{%- if section.settings.allow_note -%}
+					<p><small><a class="show-note" href="javascript:void(0)">{{ 'cart.general.customer_note' | t }}</a></small></p>
+					<div class="note" id="NoteForSeller">
+						<textarea id="note" name="note" aria-label="{{ 'cart.general.customer_note' | t }}">{{ cart.note }}</textarea>
+					</div>
+				{%- endif -%}
+
+				{%- if section.settings.shipping_calculator -%}
+					<p><small><a class="show-calculator" href="javascript:void(0)">{{ 'cart.shipping_calculator.estimate_shipping' | t }}</a></small></p>
+					<div id="ShippingCalculator">
+						{%- assign default_country = section.settings.shipping_calculator_default_country -%}
+						{%- include 'cart-shipping-calculator', default_country: default_country -%}
+					</div>
+				{%- endif -%}
+			</div>
+		</div>
+
+	  <div class="cart__foot">
+	    <a class="text-link" href="/">{{ 'cart.general.continue_shopping' | t }}</a>
+	  </div>
+	{% endif %}
+</div>
+
+
+
+{% schema %}
+{
+  "name": "Cart page",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "allow_note",
+      "label": "Enable order notes",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "allow_tax_text",
+      "label": "Enable tax & shipping text",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "custom_tax_text",
+      "label": "Custom tax text"
+    },
+    {
+      "type": "header",
+      "content": "Shipping rates calculator"
+    },
+    {
+      "type": "checkbox",
+      "id": "shipping_calculator",
+      "label": "Show shipping rates calculator",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "shipping_calculator_default_country",
+      "label": "Shipping rates calculator default country",
+      "default": "United States",
+      "info": "If the customer is logged in, their shipping address country will replace the default."
+    },
+		{
+			"type": "header",
+			"content": "Additional checkout buttons"
+		},
+		{
+			"type": "checkbox",
+			"id": "cart_show_additional_buttons",
+			"label": "Show additional checkout options on cart",
+			"info": "Move buttons for Apple Pay, Amazon Pay and PayPal express from the first step of the checkout to the cart.",
+			"default": true
+		}
+  ]
+}
+{% endschema %}

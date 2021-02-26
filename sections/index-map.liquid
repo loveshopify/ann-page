@@ -1,0 +1,210 @@
+<!-- /sections/index-map.liquid -->
+
+{% assign display_map = false %}
+{%- if section.settings.api_key != blank and section.settings.map_address -%}
+  {% assign display_map = true %}
+{%- endif -%}
+
+{%- if section.settings.image -%}
+  {%- assign img_object = section.settings.image -%}
+{%- else -%}
+  {%- assign img_object = 'blank.svg' | asset_url -%}
+{%- endif -%}
+
+<div class="index-map map-section grid--full homepage-columns js-overflow-container {{ section.settings.height }}{% if display_map %} map-section--display-map{% endif %} {% if section.settings.height == 'image-height' and section.settings.image == blank %} auto-height{% endif %}"
+  data-section-id="{{ section.id }}"
+  data-section-type="map"
+  data-zoom="{{ section.settings.zoom }}"
+  data-style="{{ section.settings.style }}"
+  data-api-key="{{ section.settings.api_key }}">
+
+  <div class="grid__item large-up--one-third medium--one-half column__block" style="background-color:{{section.settings.color_bg}};" {{ block.shopify_attributes }}>
+    <div class="flex--centered">
+      <div class="text-center js-overflow-content">
+        {% if section.settings.title != blank %}
+          <h4 class="h4--body"
+            data-aos="fade-up"
+            data-aos-duration="500">
+            {{ section.settings.title | escape }}
+          </h4>
+        {% endif %}
+        {% if section.settings.address != blank %}
+          <div class="rte map__text"
+            data-aos="fade-up"
+            data-aos-duration="600"
+            data-aos-delay="100">
+            <span>{{ section.settings.address }}</span>
+          </div>
+        {% endif %}
+        {% if section.settings.button != blank and section.settings.map_address != blank %}
+          <p data-aos="fade-up"
+            data-aos-duration="700"
+            data-aos-delay="200">
+            <a href="https://maps.google.com?daddr={{ section.settings.map_address | escape }}" target="_blank" class="btn btn--large btn--secondary btn--neutral caps">
+              {{ section.settings.button | escape }}
+            </a>
+          </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="map-section__content map-section__background-wrapper grid__item large-up--two-thirds medium--one-half column__block wide-image {{ block.settings.color }}">
+    {% unless section.settings.height == 'image-height' %}
+      <div class="map-section__image">
+        <div class="background-size-cover lazyload" data-bgset="{% include 'bgset', image: img_object %}"></div>
+      </div>
+      <noscript>
+        <div class="background-size-cover" style="background-image: url('{{ img_object | img_url: '540x' }}');"></div>
+      </noscript>
+    {% else %}
+      <div class="map-section__image">
+        {% assign img_url = img_object | img_url: '1x1' | replace: '_1x1.', '_{width}x.' %}
+          <img class="lazyload {% if section.settings.image == blank %} image-placeholder{% endif %}"
+            src="{{ img_object | img_url: '1080x' }}"
+            data-src="{{ img_url }}"
+            data-widths="[540, 720, 900, 1080, 1296, 1512, 1728, 1944, 2048]"
+            data-aspectratio="{{ img_object.aspect_ratio }}"
+            data-sizes="auto"
+            alt="{{ section.settings.title }}">
+          <noscript>
+            <img class="no-js-image" src="{{ img_object | img_url: '1024x' }}" alt="{{ section.settings.title }}">
+          </noscript>
+      </div>
+    {% endunless %}
+
+    {% if display_map %}
+      <div class="map-section__container {{ section.settings.height }}"
+           id="Map-{{ section.id }}"
+           data-address-setting="{{ section.settings.map_address | escape }}">
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+
+{% schema %}
+  {
+    "name": "Map",
+    "class": "index-section",
+    "settings": [
+      {
+        "type": "select",
+        "id": "height",
+        "label": "Section height",
+        "default": "screen-height-one-half",
+        "options": [
+          { "value": "screen-height-full", "label": "Full screen height"},
+          { "value": "screen-height-three-quarters", "label": "3/4 of screen"},
+          { "value": "screen-height-two-thirds", "label": "2/3 of screen"},
+          { "value": "screen-height-one-half", "label": "1/2 of screen"},
+          { "value": "screen-height-one-third", "label": "1/3 of screen"},
+          { "value": "seven-fifty-height-hero", "label": "750px" },
+          { "value": "sixty-fifty-height-hero", "label": "650px" },
+          { "value": "five-fifty-height-hero ", "label": "550px" },
+          { "value": "four-fifty-height-hero", "label": "450px" },
+          { "value": "image-height", "label": "Image height" }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "Address & Directions"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Map"
+      },
+      {
+        "type": "richtext",
+        "id": "address",
+        "label": "Address and hours",
+        "default": "<p>123 Fake St.<br>Vancouver, Canada</p><p>Mon - Fri, 10am - 9pm<br>Weekends, 11am - 4pm</p>"
+      },
+      {
+        "type": "text",
+        "id": "button",
+        "label": "Map link label",
+        "default": "Directions"
+      },
+      {
+        "id": "color_bg",
+        "type": "color",
+        "label": "Background color",
+        "default": "#FBFBFB"
+      },
+      {
+        "type": "header",
+        "content": "Map"
+      },
+      {
+        "id": "api_key",
+        "type": "text",
+        "label": "Google Maps API key",
+        "info": "You’ll need to [register a Google Maps API Key](https://help.shopify.com/manual/using-themes/troubleshooting/map-section-api-key) to display the map"
+      },
+      {
+        "id": "map_address",
+        "type": "text",
+        "label": "Map address",
+        "info": "Google Maps will find the exact location",
+        "default": "404 Beach Avenue, Vancouver, BC"
+      },
+      {
+        "type": "range",
+        "id": "zoom",
+        "min": 1,
+        "max": 20,
+        "step": 1,
+        "label": "Zoom",
+        "info":"Low levels cover a wide area, while higher levels cover a smaller area.",
+        "default": 12
+      },
+      {
+        "type": "select",
+        "id": "style",
+        "label": "Style",
+        "default": "silver",
+        "options": [
+          {
+            "value": "standard",
+            "label": "Standard"
+          },
+          {
+            "value": "silver",
+            "label": "Silver"
+          },
+          {
+            "value": "retro",
+            "label": "Retro"
+          },
+          {
+            "value": "dark",
+            "label": "Dark"
+          },
+          {
+            "value": "night",
+            "label": "Night"
+          },
+          {
+            "value": "aubergine",
+            "label": "Aubergine"
+          }
+        ]
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Image",
+        "info": "Displayed if the map isn’t loaded"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Map",
+        "category": "Store Information"
+      }
+    ]
+  }
+{% endschema %}

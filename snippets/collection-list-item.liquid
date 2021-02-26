@@ -1,0 +1,49 @@
+<!-- /snippets/collection-list-item.liquid -->
+
+{% if collection == empty %}
+  <div class="collection-item {{ grid_width }} collection-item--no-image">
+    <div class="collection-item__image svg-placeholder">
+      {% capture current %}{% cycle 1, 2, 3 %}{% endcapture %}
+      {{ 'collection-' | append: current | placeholder_svg_tag }}
+    </div>
+    <div class="collection-item__info">
+      <h3>{% if collection_title != blank %}{{ collection_title }}{% else %}{{ 'collections.general.items.heading' | t }}{% endif %}</h3>
+    </div>
+  </div>
+{% else %}
+  <div class="collection-item {{ grid_width }}" {{ block.shopify_attributes }}>
+      <a aria-label="{{ collection.title }}" href="{{ collection.url }}" class="collection-item__image">
+        {% if collection.image %}
+            {%- assign img_object = collection.image -%}
+        {%- elsif collection.products.first -%}
+          {%- assign img_object = collection.products.first.featured_image -%}
+        {%- endif -%}
+        <div class="collection-item__bg lazyload"
+          data-aos="img-in"
+          data-aos-delay="{{ animation_delay | times: 150 }}"
+          data-aos-duration="{{ animation_delay | times: 100 | plus: 800 }}"
+          data-aos-easing="ease-out-quart"
+          data-bgset="{% include 'bgset', image: img_object %}"></div>
+      </a>
+      <noscript>
+        <a aria-label="{{ collection.title }}" href="{{ collection.url }}"
+        class="collection-item__image" style="background-image:url('{{ collection.image | img_url: '540x' }}'); background-size: cover; background-position: center center; background-repeat: no-repeat;"
+        >
+        </a>
+      </noscript>
+    <div class="collection-item__info"
+      data-aos="fade-up"
+      data-aos-delay="{{ animation_delay | times: 100 }}"
+      data-aos-duration="{{ animation_delay | times: 100 | plus: 100 }}">
+      <a tabindex="-1" href="{{ product.url | within: collection }}">
+        <h3>
+          {% if collection_title != blank %}
+            {{ collection_title }}
+          {% else %}
+            {{ collection.title }}
+          {% endif %}
+        </h3>
+      </a>
+    </div>
+  </div>
+{%- endif -%}

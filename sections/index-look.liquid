@@ -1,0 +1,235 @@
+<!-- /sections/look.liquid -->
+
+<style>
+.look__instagram__link svg{ fill: {{ section.settings.dot_color }}; }
+</style>
+
+<div class="index-look" data-section-id="{{ section.id }}" data-section-type="look" style="background-color: {{section.settings.section_bg}};" data-swatches="{{ settings.color_swatches }}">
+  <div class="look__slider look__slider--{{ section.id }}">
+    {% if section.blocks.size > 0 %}
+      {% for block in section.blocks %}
+        {%- if block.settings.image -%}
+          {%- assign img_object = block.settings.image -%}
+          {%- assign img_small = block.settings.image | img_url: '18x' -%}
+          {%- assign img_api = block.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+        {%- else -%}
+          {%- assign img_object = 'blank.svg' | asset_url -%}
+          {%- assign img_small =  'blank.svg' | asset_url -%}
+          {%- assign img_api = 'blank.svg' | asset_url -%}
+        {%- endif -%}
+        {%- assign product = all_products[block.settings.product] -%}
+        <div class="look__slide look__slide--{{ block.id }}" {{ block.shopify_attributes }}>
+          <div class="look">
+            <p class="look__title--mobile caps">{{ section.settings.title }}</p>
+            {% unless img_object == blank %}
+              <div class="look__image">
+                <div class="look__dot__wrapper" style="top: {{ block.settings.position_y}}%; left: {{ block.settings.position_x}}%;">
+                  <div class="look__dot" style="background-color: {{section.settings.dot_color}}"></div>
+                </div>
+
+                {%- if block.settings.instagram_link != blank and block.settings.image == blank -%}
+                  <div class="look__image-bg js-instagram" data-url="{{ block.settings.instagram_link }}"></div>
+                {%- else -%}
+                  <div class="look__image-bg lazyload" data-bgset="{% include 'bgset', image: img_object %}" aria-label="{{ block.settings.image.alt | default: section.settings.title }}"></div>
+                {%- endif -%}
+                <noscript>
+                  <div class="look__image-bg no-js-image" aria-label="{{ block.settings.image.alt | default: section.settings.title }}" style="background-image: url( {{ img_object | img_url: '1024x' }} )"></div>
+                </noscript>
+
+                {% if block.settings.instagram_link != blank %}
+                  <a href="{{ block.settings.instagram_link }}" target="_blank"
+                  class="look__instagram__link bounce-animation js-trigger-instagram-modal"
+                  aria-label="instagram"
+                  data-modal="instagram-post-{{ block.id }}">
+                    <span class="visually-hidden">instagram</span>
+                    {% include 'icon-instagram' %}
+                  </a>
+                {% endif %}
+              </div>
+            {% endunless %}
+
+            <div class="look__content">
+              <p class="look__title caps">{{ section.settings.title }}</p>
+              {% if product != blank %}
+                {% include 'product-grid-item', quick_view: settings.quickview_enable, fallback: false %}
+              {% else %}
+                {% include 'product-grid-item', fallback: true %}
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+  {% for block in section.blocks %}
+    {% if block.settings.instagram_link != blank %}
+      <div class="modal__overlay" id="instagram-post-{{ block.id }}">
+        <section class="modal__outer">
+          <div class="modal__wrapper">
+            <div class="instagram__oembed__post" data-url="{{ block.settings.instagram_link }}"></div>
+          </div>
+        </section>
+      </div>
+    {% endif %}
+
+    {% if block.settings.product != blank and settings.quickview_enable %}
+      {%- assign product = all_products[block.settings.product] -%}
+      <div class="modal__overlay quicklook" id="Product{{ forloop.index0 }}-{{section.id}}">
+          <section class="modal__outer">
+           {% include 'product-quick-view' %}
+          </section>
+      </div>
+    {% endif %}
+  {% endfor %}
+
+</div>
+
+
+
+{% schema %}
+{
+  "name": "Shop the look",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Shop the look"
+    },
+    {
+      "type": "color",
+      "id": "section_bg",
+      "label": "Background color",
+      "default": "#fafafa"
+    },
+    {
+      "type": "color",
+      "id": "dot_color",
+      "label": "Dot color",
+      "default": "#FFFFFF"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product",
+      "settings": [
+        {
+          "type": "header",
+          "content":"Product"
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product",
+          "info": "Product displayed in the photo"
+        },
+        {
+          "type": "header",
+          "content":"Image"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "header",
+          "content": "Dot position"
+        },
+        {
+          "type":    "range",
+          "id":      "position_x",
+          "min":     0,
+          "max":     100,
+          "step":    1,
+          "label":   "Horizontal",
+          "unit":    "%",
+          "default": 50
+        },
+        {
+          "type":    "range",
+          "id":      "position_y",
+          "min":     0,
+          "max":     100,
+          "step":    1,
+          "label":   "Vertical",
+          "unit":    "%",
+          "default": 50
+        }
+      ]
+    },
+    {
+      "type": "instagram_product",
+      "name": "Instagram Product",
+      "settings": [
+        {
+          "type": "header",
+          "content":"Product"
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product",
+          "info": "Product displayed in the photo"
+        },
+        {
+          "type": "header",
+          "content":"Image"
+        },
+        {
+          "label": "Instagram Link",
+          "id": "instagram_link",
+          "type": "text",
+          "info": "https://www.instagram.com/p/BrTI6wvBwZA/"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "Optional: show a higher-resolution copy of the Instagram image."
+        },
+        {
+          "type": "header",
+          "content": "Dot position"
+        },
+        {
+          "type":    "range",
+          "id":      "position_x",
+          "min":     0,
+          "max":     100,
+          "step":    1,
+          "label":   "Horizontal",
+          "unit":    "%",
+          "default": 50
+        },
+        {
+          "type":    "range",
+          "id":      "position_y",
+          "min":     0,
+          "max":     100,
+          "step":    1,
+          "label":   "Vertical",
+          "unit":    "%",
+          "default": 50
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Shop the look",
+      "category": "Social",
+      "blocks": [
+        {
+          "type": "instagram_product"
+        },
+        {
+          "type": "instagram_product"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

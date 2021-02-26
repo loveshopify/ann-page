@@ -1,0 +1,74 @@
+<!-- /snippets/products-recently-viewed.liquid -->
+{%- case section.settings.product_recently_limit -%}
+  {%- when 1 -%}
+    {%- assign grid_width_large = 'large-up--one-third large-up--push-one-third' -%}
+    {%- assign grid_width_medium = 'medium--one-third push--medium--one-third' -%}
+  {%- when 2 -%}
+    {%- assign grid_width_large = 'large-up--one-half' -%}
+    {%- assign grid_width_medium = 'medium--one-half' -%}
+  {%- when 3 -%}
+    {%- assign grid_width_large = 'large-up--one-third' -%}
+    {%- assign grid_width_medium = 'medium--one-third' -%}
+  {%- when 4 -%}
+    {%- assign grid_width_large = 'large-up--one-quarter' -%}
+    {%- assign grid_width_medium = 'medium--one-half' -%}
+    {%- assign grid_width_small = 'small--one-half' -%}
+  {%- when 5 -%}
+    {%- assign grid_width_large = 'large-up--one-fifth' -%}
+    {%- assign grid_width_medium = 'medium--one-third' -%}
+    {%- assign grid_width_small = 'small--one-half' -%}
+  {%- when 6 -%}
+    {%- assign grid_width_large = 'large-up--one-sixth' -%}
+    {%- assign grid_width_medium = 'medium--one-third' -%}
+    {%- assign grid_width_small = 'small--one-half' -%}
+  {%- else -%}
+    {%- assign grid_width_large = 'large-up--one-quarter' -%}
+    {%- assign grid_width_medium = 'medium--one-third' -%}
+    {%- assign grid_width_small = 'small--one-half' -%}
+{%- endcase -%}
+
+{%- if has_recently_products and has_related_products != true -%}
+  <h3 class="recent__title theme">
+    {{- section.settings.product_recently_heading -}}
+  </h3>
+{%- endif -%}
+
+<div class="recent__wrapper" id="RecentlyViewed" data-limit="{{ section.settings.limit }}">
+  <div class="recent__content product-grid" id="recently-viewed-products" style="display:none">
+  </div>
+</div>
+
+<script>
+  var grid_width_small = '{{ grid_width_small }}';
+  var grid_width_medium = '{{ grid_width_medium }}';
+  var grid_width_large = '{{ grid_width_large }}';
+</script>
+
+{% raw %}
+  <script id="recently-viewed-product-template" type="text/x-jquery-tmpl">
+    <div class="product-item ${grid_width_small} ${grid_width_medium} ${grid_width_large}">
+      <a class="product-link" href="${url}">
+        <div class="product-item__image">
+          <div class="product-item__bg"
+            style="background-image:url(${Shopify.resizeImage(featured_image, "600x")});">
+          </div>
+          {{if compare_at_price > price}}
+            <span class="sale-box">Sale</span>
+          {{/if}}
+        </div>
+        <div class="product-information">
+          <h3 class="title">${title}</h3>
+          <span class="price {{if compare_at_price > price}}sale{{/if}}">
+            {{if compare_at_price > price}}
+              <span class="old-price">
+                $${(compare_at_price / 100).toFixed(2)}
+              </span>
+              <small>From</small>
+            {{/if}}
+            <span class="money">$${(price / 100).toFixed(2)}</span>
+          </span>
+        </div>
+      </a>
+    </div>
+  </script>
+{% endraw %}

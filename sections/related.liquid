@@ -1,0 +1,105 @@
+<!-- /sections/related.liquid -->
+{%- assign has_related_products = section.settings.related_products_enable -%}
+{%- assign has_recently_products = section.settings.show_recently_viewed -%}
+
+<div id="related" class="related__wrapper" data-section-id="{{ section.id }}" data-section-type="related">
+
+  {%- if has_related_products and has_recently_products != true -%}
+
+    <div data-related-section data-limit="{{ section.settings.limit }}" data-product-id="{{ product.id }}">
+      {%- include 'products-recommendation' -%}
+    </div>
+
+  {%- elsif has_recently_products and has_related_products != true -%}
+
+    {%- include 'products-recently-viewed' -%}
+
+  {%- elsif has_related_products and has_recently_products -%}
+    <div class="tabs-wrapper related__products">
+      <ul class="tabs">
+        <li class="tab-link tab-link-0 current" data-tab="0">
+          <h3 class="recent__title theme">
+            {{- section.settings.product_recommendations_heading -}}
+          </h3>
+        </li>
+
+        {%- if section.settings.show_recently_viewed -%}
+          <li class="tab-link tab-link-1 tab-link__recent hide" data-tab="1">
+            <h3 class="recent__title theme">
+              {{- section.settings.product_recently_heading -}}
+            </h3>
+          </li>
+        {%- endif -%}
+      </ul>
+
+      <div class="tab-content tab-content-0 current tabs__recommendation">
+        <div data-related-section data-limit="{{ section.settings.limit }}" data-product-id="{{ product.id }}">
+          {%- include 'products-recommendation' -%}
+        </div>
+      </div>
+
+      <div class="tab-content tab-content-1 tabs__recently-viewed">
+        {%- include 'products-recently-viewed' -%}
+      </div>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Product recommendations",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Related products"
+    },
+    {
+      "type": "checkbox",
+      "id": "related_products_enable",
+      "label": "Show related products",
+      "info": "Dynamic recommendations change and improve with time. [Learn more](https://help.shopify.com/en/themes/development/recommended-products)",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "label": "Product limit",
+      "default": 4
+    },
+    {
+      "type": "text",
+      "id": "product_recommendations_heading",
+      "label": "Heading",
+      "default": "Related products"
+    },
+    {
+      "type": "header",
+      "content": "Recently viewed products"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_recently_viewed",
+      "label": "Enable recently viewed products",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "product_recently_limit",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "label": "Product limit",
+      "default": 4
+    },
+    {
+      "type": "text",
+      "id": "product_recently_heading",
+      "label": "Heading",
+      "default": "Recently viewed"
+    }
+  ]
+}
+{% endschema %}

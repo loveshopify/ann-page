@@ -1,0 +1,27 @@
+<!-- /templates/customers/activate_account.liquid -->
+
+<section id="ActivateAccount" class="center account">
+  <section class="col">
+    <div class="reset-password">
+        <h2 class="theme">{{ 'customer.activate_account.title' | t }}</h2>
+        <p>{{ 'customer.activate_account.subtext' | t }}</p>
+
+      	{% form 'activate_customer_password' %}
+        {{ form.errors | default_errors }}
+        <div class="form-field">
+            <label class="large" for="password">{{ 'customer.activate_account.password' | t }}</label>
+            <input type="password" value="" name="customer[password]" id="customer_password" class="large password" size="16" placeholder="{{ 'customer.activate_account.password' | t }}" />
+        </div>
+        <div class="form-field">
+            <label class="large" for="password_confirmation">{{ 'customer.activate_account.password_confirm' | t }}</label>
+            <input type="password" value="" name="customer[password_confirmation]" id="customer_password_confirmation" class="large password" size="16" placeholder="{{ 'customer.activate_account.password_confirm' | t }}" />
+        </div>
+        <div class="form-field action-bottom center">
+            <input class="btn" type="submit" value="{{ 'customer.activate_account.submit' | t }}" />
+            <span class="note"> &nbsp; </span>
+            <input type="submit" class="btn cancel" name="decline" id="customer_decline" value="{{ 'customer.activate_account.cancel' | t }}" />
+        </div>
+        {% endform %}
+    </div>
+  </section>
+</section>

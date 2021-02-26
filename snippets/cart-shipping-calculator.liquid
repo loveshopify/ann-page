@@ -1,0 +1,51 @@
+<!-- /snippets/cart-shipping-calculator.liquid -->
+
+<div id="shipping-calculator">
+  <div>
+    <p>
+      <label for="address_country">{{ 'customer.addresses.country' | t }}</label>
+      <select id="address_country" name="address[country]" data-default="{% if shop.customer_accounts_enabled and customer %}{{ customer.default_address.country }}{% elsif default_country != '' %}{{ default_country }}{% endif %}">{{ country_option_tags }}</select>
+    </p>
+    <p id="address_province_container" style="display:none;">
+      <label for="address_province" id="address_province_label">{{ 'customer.addresses.province' | t }}</label>
+      <select id="address_province" class="address_form" name="address[province]" data-default="{% if shop.customer_accounts_enabled and customer and customer.default_address.province != '' %}{{ customer.default_address.province }}{% endif %}"></select>
+    </p>
+  </div>
+
+  <p>
+    <label for="address_zip">{{ 'customer.addresses.zip' | t }}</label>
+    <input type="text" id="address_zip" name="address[zip]"{% if shop.customer_accounts_enabled and customer %} value="{{ customer.default_address.zip }}"{% endif %} />
+  </p>
+  <input type="button" class="get-rates btn" value="{{ 'cart.shipping_calculator.calculate_shipping' | t }}" />
+
+  <div id="wrapper-response"></div>
+
+</div>
+
+<script id="shipping-calculator-response-template" type="text/x-jquery-tmpl">
+  {% raw %}
+    <p id="shipping-rates-feedback" class="{{if success}}success{{else}}error{{/if}}">
+    {{if success}}
+      {{if rates.length < 1}}
+      	{% endraw %}{{ 'cart.shipping_calculator.no_shipping_available' | t }}{% raw %}
+      {{/if}}
+    {{else}}
+      ${errorFeedback}
+    {{/if}}
+    </p>
+    <ul id="shipping-rates">
+      {{each( index, rate ) rates}}
+      <li>${rate.name}: {{html Shopify.Cart.ShippingCalculator.formatRate(rate.price)}}</li>
+      {{/each}}
+    </ul>
+  {% endraw %}
+</script>
+
+<script>
+  theme.strings = {
+      shippingCalcSubmitButton: {{ settings.shipping_calculator_submit_button_label | default: 'Calculate shipping' | json }},
+      shippingCalcSubmitButtonDisabled: {{ settings.shipping_calculator_submit_button_label_disabled | default: 'Calculating...' | json }},
+      {% if customer %}shippingCalcCustomerIsLoggedIn: true,{% endif %}
+      shippingCalcMoneyFormat: {{ shop.money_with_currency_format | json }}
+  }
+</script>

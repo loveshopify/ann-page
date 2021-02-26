@@ -1,0 +1,61 @@
+<!-- /snippets/products-recommendation.liquid -->
+
+{%- if recommendations.performed -%}
+  {%- if recommendations.products_count > 0 -%}
+    {%- if has_related_products and has_recently_products != true -%}
+      <h3 class="recent__title theme">
+        {{- section.settings.product_recommendations_heading -}}
+      </h3>
+    {%- endif -%}
+
+    <div class="product-grid">
+      {%- case recommendations.products_count -%}
+        {%- when 1 -%}
+          {%- assign grid_width_large = 'large-up--one-third large-up--push-one-third' -%}
+          {%- assign grid_width_medium = 'medium--one-third push--medium--one-third' -%}
+        {%- when 2 -%}
+          {%- assign grid_width_large = 'large-up--one-half' -%}
+          {%- assign grid_width_medium = 'medium--one-half' -%}
+        {%- when 3 -%}
+          {%- assign grid_width_large = 'large-up--one-third' -%}
+          {%- assign grid_width_medium = 'medium--one-third' -%}
+        {%- when 4 -%}
+          {%- assign grid_width_large = 'large-up--one-quarter' -%}
+          {%- assign grid_width_medium = 'medium--one-half' -%}
+          {%- assign grid_width_small = 'small--one-half' -%}
+        {%- when 5 -%}
+          {%- assign grid_width_large = 'large-up--one-fifth' -%}
+          {%- assign grid_width_medium = 'medium--one-third' -%}
+          {%- assign grid_width_small = 'small--one-half' -%}
+        {%- when 6 -%}
+          {%- assign grid_width_large = 'large-up--one-sixth' -%}
+          {%- assign grid_width_medium = 'medium--one-third' -%}
+          {%- assign grid_width_small = 'small--one-half' -%}
+        {%- else -%}
+          {%- assign grid_width_large = 'large-up--one-quarter' -%}
+          {%- assign grid_width_medium = 'medium--one-third' -%}
+          {%- assign grid_width_small = 'small--one-half' -%}
+      {%- endcase -%}
+
+      {%- for product in recommendations.products -%}
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+        {% include 'product-grid-item', quick_view: settings.quickview_enable %}
+      {%- endfor -%}
+    </div>
+
+    {%- if settings.quickview_enable -%}
+      {%- for product in recommendations.products -%}
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+        <div class="modal__overlay quicklook" id="Product{{ forloop.index0 }}-{{section.id}}">
+          <section class="modal__outer">
+            {%- include 'product-quick-view' -%}
+          </section>
+        </div>
+      {%- endfor -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- else -%}
+  <div class="related__placeholder"></div>
+{%- endif -%}

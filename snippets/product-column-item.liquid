@@ -1,0 +1,28 @@
+<!-- /snippets/product-column-item.liquid -->
+
+<a href="{{ product.url }}" class="product__column">
+  {% if product.featured_image %}
+    <div class="product__column__image__wrapper">
+      <div class="product__column__image lazyload"  data-bgset="{% include 'bgset', image: product.featured_image %}"></div>
+    </div>
+  {% endif %}
+  <div class="product__column__contents">
+    <h4 class="h5 product__column__title">{{ product.title }}</h4>
+    <p class="meta--light">
+      <span class="price{% if product.compare_at_price > product.price %} sale{% endif %}">
+      {% if product.available %}
+        {% if product.compare_at_price > product.price %}
+          <span class="old-price">{{ product.compare_at_price | money }}</span>
+        {% endif %}
+        {% if product.price_varies %}
+          <small>{{ 'products.general.from' | t }}</small> {{ product.price_min | money }}
+        {% else %}
+          {{ product.price_min | money }}
+        {% endif %}
+      {% else %}
+        <span class="sold-out">{{ 'products.product.sold_out' | t }}</span>
+      {% endif %}
+      </span>
+    </p>
+  </div>
+</a>

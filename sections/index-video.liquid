@@ -1,0 +1,191 @@
+ <!-- /sections/index-video.liquid -->
+
+{% comment %} Settings {% endcomment %}
+
+{% assign title = section.settings.title %}
+{% assign content = section.settings.content %}
+{% assign video_url = section.settings.video_url %}
+{% if section.settings.video_url == blank %}
+  {% assign video_url = 'https://www.youtube.com/watch?v=_9VUPq3SxOc' %}
+{% endif %}
+
+{% comment %} Layout {% endcomment %}
+{% assign height = section.settings.height %}
+{% assign text_color = section.settings.text_color %}
+
+{% if section.settings.logo != blank %}
+<style>
+  .hero__logo { max-width: {{ section.settings.logo_max_width | append: 'px' }}; }
+</style>
+{% endif %}
+
+<section class="index-video video-parent-section {{ height }}" data-section-id="{{ section.id }}" data-section-type="featured-video">
+  <div class="video-wrapper {{ text_color }}">
+    <div class="hero__content__wrapper align--middle-center hero__content--transparent">
+      <div class="hero__content">
+        {%- if section.settings.logo != blank -%}
+          {%- assign image = section.settings.logo -%}
+          {%- assign image_url = image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+          <img
+             class="lazyload hero__logo"
+             data-src="{{ image_url }}"
+             data-widths="[295,394,590,700,800,1000,1200,1500,1800,2000,2400]"
+             data-aspectratio="{{ image.aspect_ratio }}"
+             data-sizes="auto"
+             alt="{{ image.alt | escape }}">
+          <noscript>
+            <img src="{{ image | img_url: '512x' }}" alt="{{ image.alt | escape }}" class="hero__logo no-js-image">
+          </noscript>
+        {%- endif -%}
+
+        {%- if title != blank -%}
+          <h1 class="hero__title" data-aos="fade-up" data-aos-duration="500">{{ title }}</h1>
+        {%- endif -%}
+        {%- if content != blank -%}
+          <div class="hero__description h5--body"
+            data-aos="fade-up"
+            data-aos-duration="600"
+            data-aos-delay="100">
+            {{ content }}
+          </div>
+        {%- endif -%}
+
+        <a href="{{ video_url }}" class="video__play js-video__play" data-aos="fade-up" data-aos-duration="700" data-aos-delay="200">
+          {% include 'icon-play' %}
+          <span class="visually-hidden">&#9654;</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Video -->
+    <div class="video__image {{ height }}">
+      {%- assign image = section.settings.image -%}
+      {%- if image != blank -%}
+        <div class="video__image-bg lazyload"
+            data-bgset="{% include 'bgset', image: image %}"
+            data-sizes="auto"
+            data-parent-fit="cover">
+        </div>
+        <noscript>
+          <div class="video__image-bg no-js-image" style="background-image:url('{{ image | img_url: '1024x' }}');"></div>
+        </noscript>
+      {%- else -%}
+        <div class="video__image-bg placeholder-bg"></div>
+      {%- endif -%}
+
+
+      {% assign overlay_opacity = section.settings.overlay_opacity | times: 0.01 %}
+      <div class="image-overlay" style="background-color:{{ section.settings.overlay_color }} !important; opacity:{{ overlay_opacity }};"></div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Video",
+  "class": "featured-video-section section-fullscreen",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Video"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "Text",
+      "default": "<p>Describe in a few words your special products, collection, or brand.</p>"
+    },
+    {
+      "id": "video_url",
+      "type": "video_url",
+      "label": "Link",
+      "accept": ["youtube", "vimeo"],
+      "default": "https://www.youtube.com/watch?v=_9VUPq3SxOc"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "range",
+      "id": "logo_max_width",
+      "label": "Custom logo width (in pixels)",
+      "min": 50,
+      "max": 500,
+      "default": 100,
+      "step": 5,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "select",
+      "id": "height",
+      "label": "Height",
+      "default": "screen-height-two-thirds",
+      "options": [
+        { "value": "screen-height-full", "label": "Full screen height"},
+        { "value": "screen-height-three-quarters", "label": "3/4 of screen"},
+        { "value": "screen-height-two-thirds", "label": "2/3 of screen"},
+        { "value": "screen-height-one-half", "label": "1/2 of screen"},
+        { "value": "screen-height-one-third", "label": "1/3 of screen"},
+        { "value": "seven-fifty-height-hero", "label": "750px" },
+        { "value": "sixty-fifty-height-hero", "label": "650px" },
+        { "value": "five-fifty-height-hero ", "label": "550px" },
+        { "value": "four-fifty-height-hero", "label": "450px" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "text-dark",
+      "options": [
+        { "value": "text-light", "label": "White"},
+        { "value": "text-dark", "label": "Dark"}
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Overlay"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Opacity",
+      "info": "Increase contrast for legible text.",
+      "unit": "%",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "default":15
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Color",
+      "default": "#fff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video",
+      "category": "video"
+    }
+  ]
+}
+{% endschema %}

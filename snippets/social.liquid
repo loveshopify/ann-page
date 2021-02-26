@@ -1,0 +1,19 @@
+{% if settings.instagram_link != ''
+   or settings.pinterest_link != ''
+   or settings.facebook_link != ''
+   or settings.twitter_link != ''
+   or settings.youtube_link != ''
+   or settings.vimeo_link != ''
+   or settings.tumblr_link != ''
+   or settings.atom_link != '' %}
+	<ul class="clearfix social__links">
+	{% if settings.instagram_link != '' %}<li><a href="{{ settings.instagram_link }}" title="{{ shop.name }} on Instagram" target="_blank">{% include 'icon-instagram' %}<span class="visually-hidden">Instagram</span></a></li>{% endif %}
+	{% if settings.pinterest_link != '' %}<li><a href="{{ settings.pinterest_link }}" title="{{ shop.name }} on Pinterest" target="_blank">{% include 'icon-pinterest' %}<span class="visually-hidden">Pinterest</span></a></li>{% endif %}
+	{% if settings.facebook_link != '' %}<li><a href="{{ settings.facebook_link }}" title="{{ shop.name }} on Facebook" target="_blank">{% include 'icon-facebook' %}<span class="visually-hidden">Facebook</span></a></li>{% endif %}
+	{% if settings.twitter_link != '' %}<li><a href="{{ settings.twitter_link }}" title="{{ shop.name }} on Twitter" target="_blank">{% include 'icon-twitter' %}<span class="visually-hidden">Twitter</span></a></li>{% endif %}
+	{% if settings.youtube_link != '' %}<li><a href="{{ settings.youtube_link }}" title="{{ shop.name }} on YouTube" target="_blank">{% include 'icon-youtube' %}<span class="visually-hidden">YouTube</span></a></li>{% endif %}
+	{% if settings.vimeo_link != '' %}<li><a href="{{ settings.vimeo_link }}" title="{{ shop.name }} on Vimeo" target="_blank">{% include 'icon-vimeo' %}<span class="visually-hidden">Vimeo</span></a></li>{% endif %}
+	{% if settings.tumblr_link != '' %}<li><a href="{{ settings.tumblr_link }}" title="{{ shop.name }} on Tumblr" target="_blank">{% include 'icon-tumblr' %}<span class="visually-hidden">Tumblr</span></a></li>{% endif %}
+	{% if settings.atom_link != '' %}<li><a href="{{ settings.atom_link }}" title="{{ shop.name }} Feed" target="_blank">{% include 'icon-rss' %}<span class="visually-hidden">Feed</span></a></li>{% endif %}
+	</ul>
+{% endif %}
